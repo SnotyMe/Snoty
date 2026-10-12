@@ -1,4 +1,4 @@
-import { locales } from "../../shared/i18n.ts"
+import { locales } from "./shared/i18n.ts"
 import { fileURLToPath } from "node:url"
 
 export default defineNuxtConfig({
