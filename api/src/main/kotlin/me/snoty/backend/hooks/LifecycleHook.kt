@@ -1,3 +1,5 @@
 package me.snoty.backend.hooks
 
-typealias LifecycleHook<T> = suspend (T) -> Unit
+fun interface LifecycleHook<in T : Any> {
+    suspend operator fun invoke(data: T)
+}

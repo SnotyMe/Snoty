@@ -354,13 +354,21 @@ public final class me/snoty/backend/featureflags/LogLevelFeatureFlag : me/snoty/
 
 public abstract interface class me/snoty/backend/hooks/HookRegistry {
 	public abstract fun executeHooks (Lkotlin/reflect/KClass;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun registerHook (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function2;)V
+	public abstract fun registerHook (Lkotlin/reflect/KClass;Lme/snoty/backend/hooks/LifecycleHook;)V
 }
 
-public abstract interface class me/snoty/backend/hooks/impl/NodeapiRoutesHook : kotlin/coroutines/jvm/internal/SuspendFunction, kotlin/jvm/functions/Function2 {
+public abstract interface class me/snoty/backend/hooks/LifecycleHook {
+	public abstract fun invoke (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public abstract interface class me/snoty/backend/hooks/impl/PreBusinessStartupHook : kotlin/coroutines/jvm/internal/SuspendFunction, kotlin/jvm/functions/Function2 {
+public abstract interface class me/snoty/backend/hooks/impl/NodeapiRoutesHook : me/snoty/backend/hooks/LifecycleHook {
+}
+
+public abstract interface class me/snoty/backend/hooks/impl/PreBusinessStartupHook : me/snoty/backend/hooks/LifecycleHook {
+}
+
+public final class me/snoty/backend/injection/KoinUtilsKt {
+	public static final fun getFromAllScopes (Lorg/koin/core/Koin;Lkotlin/reflect/KClass;)Ljava/util/List;
 }
 
 public final class me/snoty/backend/logging/KMDC {
@@ -1767,6 +1775,12 @@ public final class me/snoty/backend/wiring/flow/ExportNode$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
+public abstract interface class me/snoty/backend/wiring/flow/FlowCreatedHook : me/snoty/backend/hooks/LifecycleHook {
+}
+
+public abstract interface class me/snoty/backend/wiring/flow/FlowDeletedHook : me/snoty/backend/hooks/LifecycleHook {
+}
+
 public final class me/snoty/backend/wiring/flow/FlowExportImportSchema {
 	public static final field INSTANCE Lme/snoty/backend/wiring/flow/FlowExportImportSchema;
 	public static final field VERSION Ljava/lang/String;
@@ -1799,6 +1813,21 @@ public abstract interface class me/snoty/backend/wiring/flow/FlowService {
 	public abstract fun query-nxKDBKo (Ljava/lang/String;)Lkotlinx/coroutines/flow/Flow;
 	public abstract fun rename (Lme/snoty/core/flow/Workflow;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun updateSettings (Lme/snoty/core/flow/Workflow;Lme/snoty/core/flow/WorkflowSettings;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class me/snoty/backend/wiring/flow/FlowServiceInterceptor : me/snoty/backend/wiring/flow/FlowService {
+	public fun <init> (Lme/snoty/backend/wiring/flow/FlowService;Lme/snoty/backend/hooks/HookRegistry;)V
+	public fun create-Kj1tVJ8 (Ljava/lang/String;Ljava/lang/String;Lme/snoty/core/flow/WorkflowSettings;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun delete (Lme/snoty/core/flow/Workflow;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getAll ()Lkotlinx/coroutines/flow/Flow;
+	public fun getStandalone-r-kuNrI (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getWithNodes-e-VO5GA (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun query-nxKDBKo (Ljava/lang/String;)Lkotlinx/coroutines/flow/Flow;
+	public fun rename (Lme/snoty/core/flow/Workflow;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateSettings (Lme/snoty/core/flow/Workflow;Lme/snoty/core/flow/WorkflowSettings;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class me/snoty/backend/wiring/flow/FlowUpdatedHook : me/snoty/backend/hooks/LifecycleHook {
 }
 
 public final class me/snoty/backend/wiring/flow/ImportFlow {
@@ -1867,15 +1896,6 @@ public final class me/snoty/backend/wiring/flow/ImportNodeDescriptor {
 
 public final class me/snoty/backend/wiring/flow/ImportNodeDescriptor$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
-}
-
-public abstract interface class me/snoty/backend/wiring/flow/NodeCreatedHook : kotlin/coroutines/jvm/internal/SuspendFunction, kotlin/jvm/functions/Function2 {
-}
-
-public abstract interface class me/snoty/backend/wiring/flow/NodeDeletedHook : kotlin/coroutines/jvm/internal/SuspendFunction, kotlin/jvm/functions/Function2 {
-}
-
-public abstract interface class me/snoty/backend/wiring/flow/NodeUpdatedHook : kotlin/coroutines/jvm/internal/SuspendFunction, kotlin/jvm/functions/Function2 {
 }
 
 public abstract interface class me/snoty/backend/wiring/flow/execution/ExecutionEventAdapter : me/snoty/backend/adapter/Adapter {
@@ -2060,6 +2080,12 @@ public final class me/snoty/backend/wiring/node/InvalidNodeSettings$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
+public abstract interface class me/snoty/backend/wiring/node/NodeCreatedHook : me/snoty/backend/hooks/LifecycleHook {
+}
+
+public abstract interface class me/snoty/backend/wiring/node/NodeDeletedHook : me/snoty/backend/hooks/LifecycleHook {
+}
+
 public abstract interface class me/snoty/backend/wiring/node/NodeHandleContext {
 	public abstract fun getCredentialService ()Lme/snoty/backend/wiring/credential/CredentialService;
 	public abstract fun getIntermediateDataMapperRegistry ()Lme/snoty/backend/wiring/data/IntermediateDataMapperRegistry;
@@ -2207,6 +2233,9 @@ public final class me/snoty/backend/wiring/node/NodeSettingsDeserializationServi
 
 public final class me/snoty/backend/wiring/node/NodeSettingsKt {
 	public static final fun tryDeserializeNodeSettings-ReG42h4 (Ljava/lang/String;Lme/snoty/backend/wiring/node/registry/NodeRegistry;Lkotlin/jvm/functions/Function1;)Lme/snoty/backend/wiring/node/NodeSettings;
+}
+
+public abstract interface class me/snoty/backend/wiring/node/NodeUpdatedHook : me/snoty/backend/hooks/LifecycleHook {
 }
 
 public abstract interface annotation class me/snoty/backend/wiring/node/ReceiveEmptyInput : java/lang/annotation/Annotation {
