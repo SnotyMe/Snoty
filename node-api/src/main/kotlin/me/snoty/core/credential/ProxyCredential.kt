@@ -1,4 +1,4 @@
-package me.snoty.backend.utils.proxy
+package me.snoty.core.credential
 
 import io.ktor.client.*
 import kotlinx.serialization.Serializable

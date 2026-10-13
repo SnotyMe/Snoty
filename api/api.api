@@ -1269,40 +1269,6 @@ public final class me/snoty/backend/utils/jsonrpc/JsonRpcResponse$Companion {
 	public final fun serializer (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;
 }
 
-public final class me/snoty/backend/utils/proxy/ProxyCredential : me/snoty/backend/wiring/credential/Credential {
-	public static final field Companion Lme/snoty/backend/utils/proxy/ProxyCredential$Companion;
-	public fun <init> (Lme/snoty/backend/utils/proxy/ProxyType;Ljava/lang/String;I)V
-	public final fun component1 ()Lme/snoty/backend/utils/proxy/ProxyType;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()I
-	public final fun copy (Lme/snoty/backend/utils/proxy/ProxyType;Ljava/lang/String;I)Lme/snoty/backend/utils/proxy/ProxyCredential;
-	public static synthetic fun copy$default (Lme/snoty/backend/utils/proxy/ProxyCredential;Lme/snoty/backend/utils/proxy/ProxyType;Ljava/lang/String;IILjava/lang/Object;)Lme/snoty/backend/utils/proxy/ProxyCredential;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getHost ()Ljava/lang/String;
-	public final fun getPort ()I
-	public final fun getType ()Lme/snoty/backend/utils/proxy/ProxyType;
-	public fun hashCode ()I
-	public final fun toProxyConfig ()Lme/snoty/backend/utils/http/ProxyConfig;
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class me/snoty/backend/utils/proxy/ProxyCredential$Companion {
-	public final fun serializer ()Lkotlinx/serialization/KSerializer;
-}
-
-public final class me/snoty/backend/utils/proxy/ProxyType : java/lang/Enum {
-	public static final field HTTP Lme/snoty/backend/utils/proxy/ProxyType;
-	public static final field SOCKS Lme/snoty/backend/utils/proxy/ProxyType;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lme/snoty/backend/utils/proxy/ProxyType;
-	public static fun values ()[Lme/snoty/backend/utils/proxy/ProxyType;
-}
-
-public final class me/snoty/backend/utils/proxy/ProxyUtilsKt {
-	public static final fun withOptionalProxy (Lio/ktor/client/HttpClient;Lme/snoty/backend/utils/proxy/ProxyCredential;)Lio/ktor/client/HttpClient;
-	public static final fun withProxy (Lio/ktor/client/HttpClient;Lme/snoty/backend/utils/proxy/ProxyCredential;)Lio/ktor/client/HttpClient;
-}
-
 public abstract class me/snoty/backend/wiring/credential/Credential {
 	public static final field Companion Lme/snoty/backend/wiring/credential/Credential$Companion;
 	public fun <init> ()V

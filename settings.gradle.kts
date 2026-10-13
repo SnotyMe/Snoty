@@ -14,6 +14,7 @@ fun listRootDirsIn(dir: String) =
 
 include("api")
 include("plugin")
+include("node-api")
 include("nodes")
 
 listRootDirsIn("adapter")

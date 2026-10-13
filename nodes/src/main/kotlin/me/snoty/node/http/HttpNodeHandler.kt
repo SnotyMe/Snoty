@@ -5,7 +5,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.util.*
 import me.snoty.backend.utils.TextParser
-import me.snoty.backend.utils.proxy.withOptionalProxy
 import me.snoty.backend.wiring.credential.resolveOrNull
 import me.snoty.backend.wiring.data.NodeInput
 import me.snoty.backend.wiring.data.NodeOutput
@@ -16,6 +15,7 @@ import me.snoty.backend.wiring.node.NodeHandleContext
 import me.snoty.backend.wiring.node.NodeHandler
 import me.snoty.backend.wiring.node.RegisterNode
 import me.snoty.backend.wiring.node.metadata.NodeStereotype
+import me.snoty.core.credential.withOptionalProxy
 import me.snoty.core.node.NodeWithSettings
 import me.snoty.core.node.getConfig
 import org.koin.core.annotation.Single

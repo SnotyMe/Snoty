@@ -5,9 +5,9 @@ import kotlinx.serialization.Serializable
 import me.snoty.backend.schema.FieldDefaultValue
 import me.snoty.backend.schema.FieldDescription
 import me.snoty.backend.utils.ParseFormat
-import me.snoty.backend.utils.proxy.ProxyCredential
 import me.snoty.backend.wiring.credential.CredentialRef
 import me.snoty.backend.wiring.node.NodeSettings
+import me.snoty.core.credential.ProxyCredential
 import org.bson.Document
 import io.ktor.http.HttpMethod as KtorHttpMethod
 
