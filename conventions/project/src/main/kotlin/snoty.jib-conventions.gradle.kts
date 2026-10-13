@@ -9,7 +9,7 @@ jib {
 		.getOrElse("ghcr.io/snotyme/snoty-backend")
 
 	from {
-		image = "eclipse-temurin:21-jre-alpine"
+		image = "eclipse-temurin:25-jre-alpine"
 	}
 	to {
 		val allTags = providers.gradleProperty("me.snoty.docker.tags").orNull?.trim()?.split(" ")?.toSet()
