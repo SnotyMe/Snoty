@@ -16,11 +16,13 @@ import me.snoty.core.flow.*
 import me.snoty.core.user.UserId
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
+import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 import kotlin.time.Clock
 import kotlin.time.Instant
 
 @Single
+@Named("adapter")
 class MongoFlowService(
 	db: MongoDatabase,
 	private val settingsDeserializationService: NodeSettingsDeserializationService,
