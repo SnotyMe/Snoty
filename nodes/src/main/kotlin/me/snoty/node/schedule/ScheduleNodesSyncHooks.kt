@@ -2,10 +2,10 @@ package me.snoty.node.schedule
 
 import me.snoty.backend.scheduling.NodeScheduler
 import me.snoty.backend.scheduling.Schedulable
-import me.snoty.backend.wiring.flow.NodeCreatedHook
-import me.snoty.backend.wiring.flow.NodeDeletedHook
-import me.snoty.backend.wiring.flow.NodeUpdatedHook
+import me.snoty.backend.wiring.node.NodeCreatedHook
+import me.snoty.backend.wiring.node.NodeDeletedHook
 import me.snoty.backend.wiring.node.NodeSettings
+import me.snoty.backend.wiring.node.NodeUpdatedHook
 import me.snoty.core.node.NodeWithSettings
 import org.koin.core.annotation.Single
 

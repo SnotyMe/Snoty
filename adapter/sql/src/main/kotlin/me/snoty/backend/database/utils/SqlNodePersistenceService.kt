@@ -9,7 +9,7 @@ import me.snoty.backend.database.sql.suspendTransaction
 import me.snoty.backend.hooks.HookRegistry
 import me.snoty.backend.hooks.register
 import me.snoty.backend.utils.hackyEncodeToString
-import me.snoty.backend.wiring.flow.NodeDeletedHook
+import me.snoty.backend.wiring.node.NodeDeletedHook
 import me.snoty.backend.wiring.node.NodeTable
 import me.snoty.backend.wiring.node.persistence.NodePersistenceFactory
 import me.snoty.backend.wiring.node.persistence.NodePersistenceService

@@ -15,7 +15,7 @@ import me.snoty.backend.database.mongo.upsertOne
 import me.snoty.backend.hooks.HookRegistry
 import me.snoty.backend.hooks.register
 import me.snoty.backend.utils.bson.getIdAsString
-import me.snoty.backend.wiring.flow.NodeDeletedHook
+import me.snoty.backend.wiring.node.NodeDeletedHook
 import me.snoty.core.node.Node
 import me.snoty.core.node.NodeType
 import org.bson.Document
