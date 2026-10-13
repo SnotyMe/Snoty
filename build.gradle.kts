@@ -70,6 +70,7 @@ dependencies { with(libs) {
     // other adapters
     implementation(projects.adapter.redis)
 
+    devImplementation(libs.koin.annotations)
     implementation(koin.slf4j)
     implementation(libraries.coroutines.core)
 
@@ -99,6 +100,7 @@ dependencies { with(libs) {
     implementation(ktor.server.openapi)
     implementation(ktor.server.routing.openapi)
     implementation(cohort.ktor)
+    implementation(koin.ktor)
 
     implementation(libraries.swagger.codegen)
 

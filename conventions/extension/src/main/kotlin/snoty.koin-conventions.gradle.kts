@@ -27,9 +27,9 @@ dependencies {
 		?.displayName
 			?: throw IllegalStateException("No koin version")
 
-	implementation("${libs.getModule("koin-core")}:$koinVersion")
-	implementation("${libs.getModule("koin-ktor")}:$koinVersion")
-	api("${libs.getModule("koin-annotations")}:$koinVersion")
+	compileOnly("${libs.getModule("koin-core")}:$koinVersion")
+	compileOnly("${libs.getModule("koin-ktor")}:$koinVersion")
+	compileOnly("${libs.getModule("koin-annotations")}:$koinVersion")
 }
 
 koinCompiler {
