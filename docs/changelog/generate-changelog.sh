@@ -21,4 +21,4 @@ fi
 
 git-cliff "${cliff_args[@]}"
 
-rm "$context_file"
+[ -f "$context_file" ] && rm "$context_file"
