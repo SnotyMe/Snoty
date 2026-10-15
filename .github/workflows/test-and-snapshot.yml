@@ -9,9 +9,14 @@ permissions:
   checks: write
   packages: write
 jobs:
-  test:
+  get-version:
+    uses: ./.github/workflows/determine-version.yml
+
+  build:
     name: Build and run Tests
+    needs: get-version
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v7
 
@@ -53,13 +58,9 @@ jobs:
 
       - name: Build docker image
         run: |
-          branch="${GITHUB_REF#refs/heads/}"
-          branch_tag="${branch//\//-}"
-          sha_short="${GITHUB_SHA::7}"
-
           ./gradlew \
             -Pme.snoty.docker.image="ghcr.io/snotyme/snoty-backend-snapshot" \
-            -Pme.snoty.docker.tags="${branch_tag}-${sha_short}" \
+            -Pme.snoty.docker.tags="${{ needs.get-version.outputs.version }}" \
             -Pme.snoty.github.run="${{github.run_id}}:${{github.run_number}}" \
             jibDockerBuild
 
