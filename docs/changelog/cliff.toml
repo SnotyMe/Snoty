@@ -12,9 +12,6 @@ body = """
 {%- endif %} - by @{{ commit.remote.username }} in {% if extra.explicit_repo %}{{ repo }}@{% endif %}{{ commit.id }}
 {%- endmacro -%}
 
-## Notable Changes
-None.
-
 ## Nodes
 {% for scope, commits in commits | group_by(attribute="scope") %}
     {%- if scope | truncate(length=1) != scope | upper | truncate(length=1) -%}{% continue %}{%- endif %}
