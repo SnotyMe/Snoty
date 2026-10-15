@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import liqp.TemplateParser
 import me.snoty.backend.schema.FieldDescription
 import me.snoty.backend.schema.Language
+import me.snoty.backend.utils.bson.encodeObjects
 import me.snoty.backend.wiring.data.NodeInput
 import me.snoty.backend.wiring.data.NodeOutput
 import me.snoty.backend.wiring.data.get
@@ -12,6 +13,7 @@ import me.snoty.backend.wiring.node.metadata.NodeStereotype
 import me.snoty.core.node.NodeWithSettings
 import me.snoty.core.node.getConfig
 import org.bson.Document
+import org.bson.codecs.configuration.CodecRegistry
 import org.koin.core.annotation.Single
 
 @Serializable
@@ -31,7 +33,9 @@ data class FilterSettings(
 	outputType = Any::class,
 )
 @Single
-class FilterNodeHandler : NodeHandler {
+class FilterNodeHandler(
+	private val codecRegistry: CodecRegistry,
+) : NodeHandler {
 	context(_: NodeHandleContext)
 	override suspend fun process(node: NodeWithSettings, input: NodeInput): NodeOutput {
 		val settings: FilterSettings = node.getConfig()
@@ -39,7 +43,7 @@ class FilterNodeHandler : NodeHandler {
 		
 		// no modifications happen to the original data
 		val result = input.filter {
-			val data = it.get<Document>()
+			val data = it.get<Document>().encodeObjects(codecRegistry)
 			val rendered = template.render(data).trim()
 			rendered.trim().toBooleanStrict()
 		}

@@ -1132,6 +1132,10 @@ public final class me/snoty/backend/utils/bson/DocumentSetUtilsKt {
 	public static final fun setByPath (Lorg/bson/Document;Ljava/lang/String;Ljava/lang/Object;)V
 }
 
+public final class me/snoty/backend/utils/bson/DocumentUtilsKt {
+	public static final fun encodeObjects (Lorg/bson/Document;Lorg/bson/codecs/configuration/CodecRegistry;)Lorg/bson/Document;
+}
+
 public final class me/snoty/backend/utils/bson/InstantCodec : org/bson/codecs/Codec {
 	public fun <init> ()V
 	public synthetic fun decode (Lorg/bson/BsonReader;Lorg/bson/codecs/DecoderContext;)Ljava/lang/Object;
