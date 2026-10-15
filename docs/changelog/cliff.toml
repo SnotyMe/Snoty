@@ -22,7 +22,7 @@ None.
     {%- for group, commit in commits | group_by(attribute="group") %}
         {%- for commit in commit %}
         - {% if commit.breaking %}[**breaking**] {% endif %}**{{group}}**: \
-            {{ commit.message }} - by @{{ commit.author.name }} in {{ commit.id }}
+            {{ self::commit_line(commit=commit) }}
         {%- endfor %}
     {%- endfor %}
 {% endfor %}
