@@ -7,4 +7,7 @@ object KMDC {
 	fun put(key: AttributeKey<String>, value: String) {
 		MDC.put(key.key, value)
 	}
+
+	fun get(key: AttributeKey<String>): String? =
+		MDC.get(key.key)
 }

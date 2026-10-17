@@ -159,6 +159,17 @@ public final class me/snoty/backend/build/BuildInfo$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
+public final class me/snoty/backend/config/AntiAbuseConfig {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lme/snoty/backend/config/AntiAbuseConfig;
+	public static synthetic fun copy$default (Lme/snoty/backend/config/AntiAbuseConfig;Ljava/lang/String;ILjava/lang/Object;)Lme/snoty/backend/config/AntiAbuseConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContactEmail ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class me/snoty/backend/config/ApplicationMode : java/lang/Enum {
 	public static final field BACKEND Lme/snoty/backend/config/ApplicationMode;
 	public static final field FULLSTACK Lme/snoty/backend/config/ApplicationMode;
@@ -169,8 +180,8 @@ public final class me/snoty/backend/config/ApplicationMode : java/lang/Enum {
 }
 
 public final class me/snoty/backend/config/Config {
-	public fun <init> (Lme/snoty/backend/config/ServerConfig;SSLme/snoty/backend/config/ApplicationMode;Ljava/lang/String;Ljava/util/List;Lme/snoty/backend/config/Environment;)V
-	public synthetic fun <init> (Lme/snoty/backend/config/ServerConfig;SSLme/snoty/backend/config/ApplicationMode;Ljava/lang/String;Ljava/util/List;Lme/snoty/backend/config/Environment;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lme/snoty/backend/config/ServerConfig;SSLme/snoty/backend/config/ApplicationMode;Ljava/lang/String;Ljava/util/List;Lme/snoty/backend/config/Environment;Lme/snoty/backend/config/AntiAbuseConfig;)V
+	public synthetic fun <init> (Lme/snoty/backend/config/ServerConfig;SSLme/snoty/backend/config/ApplicationMode;Ljava/lang/String;Ljava/util/List;Lme/snoty/backend/config/Environment;Lme/snoty/backend/config/AntiAbuseConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lme/snoty/backend/config/ServerConfig;
 	public final fun component2 ()S
 	public final fun component3 ()S
@@ -178,9 +189,11 @@ public final class me/snoty/backend/config/Config {
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/util/List;
 	public final fun component7 ()Lme/snoty/backend/config/Environment;
-	public final fun copy (Lme/snoty/backend/config/ServerConfig;SSLme/snoty/backend/config/ApplicationMode;Ljava/lang/String;Ljava/util/List;Lme/snoty/backend/config/Environment;)Lme/snoty/backend/config/Config;
-	public static synthetic fun copy$default (Lme/snoty/backend/config/Config;Lme/snoty/backend/config/ServerConfig;SSLme/snoty/backend/config/ApplicationMode;Ljava/lang/String;Ljava/util/List;Lme/snoty/backend/config/Environment;ILjava/lang/Object;)Lme/snoty/backend/config/Config;
+	public final fun component8 ()Lme/snoty/backend/config/AntiAbuseConfig;
+	public final fun copy (Lme/snoty/backend/config/ServerConfig;SSLme/snoty/backend/config/ApplicationMode;Ljava/lang/String;Ljava/util/List;Lme/snoty/backend/config/Environment;Lme/snoty/backend/config/AntiAbuseConfig;)Lme/snoty/backend/config/Config;
+	public static synthetic fun copy$default (Lme/snoty/backend/config/Config;Lme/snoty/backend/config/ServerConfig;SSLme/snoty/backend/config/ApplicationMode;Ljava/lang/String;Ljava/util/List;Lme/snoty/backend/config/Environment;Lme/snoty/backend/config/AntiAbuseConfig;ILjava/lang/Object;)Lme/snoty/backend/config/Config;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAntiAbuse ()Lme/snoty/backend/config/AntiAbuseConfig;
 	public final fun getApplicationMode ()Lme/snoty/backend/config/ApplicationMode;
 	public final fun getCorsHosts ()Ljava/util/List;
 	public final fun getEnvironment ()Lme/snoty/backend/config/Environment;
@@ -373,6 +386,7 @@ public final class me/snoty/backend/injection/KoinUtilsKt {
 
 public final class me/snoty/backend/logging/KMDC {
 	public static final field INSTANCE Lme/snoty/backend/logging/KMDC;
+	public final fun get (Lio/opentelemetry/api/common/AttributeKey;)Ljava/lang/String;
 	public final fun put (Lio/opentelemetry/api/common/AttributeKey;Ljava/lang/String;)V
 }
 
@@ -1188,7 +1202,12 @@ public final class me/snoty/backend/utils/http/FlowErrorsKt {
 
 public final class me/snoty/backend/utils/http/HttpClientProviderKt {
 	public static final fun configureBase (Lio/ktor/client/HttpClientConfig;Lio/opentelemetry/api/OpenTelemetry;)V
-	public static final fun httpClient (Lio/opentelemetry/api/OpenTelemetry;Lme/snoty/backend/utils/http/ProxyConfigWrapper;)Lio/ktor/client/HttpClient;
+	public static final fun httpClient (Lio/opentelemetry/api/OpenTelemetry;Lme/snoty/backend/utils/http/ProxyConfigWrapper;Lme/snoty/backend/build/BuildInfo;Lme/snoty/backend/config/Config;)Lio/ktor/client/HttpClient;
+}
+
+public final class me/snoty/backend/utils/http/HttpHeaderUtilsKt {
+	public static final fun getXSnoty (Lio/ktor/http/HttpHeaders;)Ljava/lang/String;
+	public static final fun getXSnotyNodeId (Lio/ktor/http/HttpHeaders;)Ljava/lang/String;
 }
 
 public final class me/snoty/backend/utils/http/HttpProxyUtilsKt {
