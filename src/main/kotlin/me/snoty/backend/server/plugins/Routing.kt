@@ -35,4 +35,6 @@ fun Application.configureRouting(config: Config) {
 	}
 
 	install(DoubleReceive)
+
+	install(SelfCallRejectionPlugin)
 }
