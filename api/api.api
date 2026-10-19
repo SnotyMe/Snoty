@@ -2275,6 +2275,7 @@ public final class me/snoty/backend/wiring/node/metadata/NodeMetadataUtilsKt {
 public final class me/snoty/backend/wiring/node/metadata/NodeStereotype : java/lang/Enum {
 	public static final field END Lme/snoty/backend/wiring/node/metadata/NodeStereotype;
 	public static final field MIDDLE Lme/snoty/backend/wiring/node/metadata/NodeStereotype;
+	public static final field START Lme/snoty/backend/wiring/node/metadata/NodeStereotype;
 	public static final field TRIGGER Lme/snoty/backend/wiring/node/metadata/NodeStereotype;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getLogOutput ()Z

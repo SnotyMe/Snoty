@@ -27,6 +27,9 @@ enum class NodeStereotype(
 	TRIGGER(
 		logOutput = true
 	),
+	START(
+		logOutput = true
+	),
 	MIDDLE(
 		logOutput = true
 	),

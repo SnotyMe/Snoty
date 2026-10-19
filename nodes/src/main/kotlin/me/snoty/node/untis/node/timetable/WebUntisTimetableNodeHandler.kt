@@ -20,7 +20,7 @@ import org.koin.core.annotation.Single
 	name = "webuntis_timetable",
 	displayName = "WebUntis Timetable",
 	icon = Icon(name = "arcticons-untis-mobile", color = "#FF6033"),
-	stereotype = NodeStereotype.MIDDLE,
+	stereotype = NodeStereotype.START,
 	settingsType = WebUntisTimetableSettings::class,
 	outputType = MappedUntisPeriod::class,
 )

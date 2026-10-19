@@ -21,7 +21,7 @@ import org.slf4j.event.Level
 	name = "moodle_assignments",
 	displayName = "Moodle",
 	icon = Icon(name = "devicon-moodle"),
-	stereotype = NodeStereotype.MIDDLE,
+	stereotype = NodeStereotype.START,
 	settingsType = MoodleSettings::class,
 	outputType = MoodleAssignment::class
 )
