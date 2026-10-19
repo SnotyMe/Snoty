@@ -49,10 +49,9 @@
 	height: var(--flow-resize-thickness);
 }
 
-.vue-flow__controls-button {
+.vue-flow .vue-flow__controls-button {
 	width: var(--flow-control-button-size);
 	height: var(--flow-control-button-size);
-	box-shadow: 0 0 1em 0 var(--ui-bg);
 	box-sizing: content-box;
 	display: flex;
 	justify-content: center;
@@ -60,6 +59,12 @@
 	cursor: pointer;
 	user-select: none;
 	@apply bg-muted hover:bg-accented fill-inverted not-last-of-type:border-b not-last-of-type:border-b-accented rounded-none p-1;
+}
+
+/* Horizontal Button compensation */
+.vue-flow__controls-horizontal > .vue-flow__controls-button {
+	height: calc(var(--flow-control-button-size) + 1px);
+	@apply not-last:border-r not-last:border-r-accented;
 }
 
 .vue-flow__controls-button:disabled {

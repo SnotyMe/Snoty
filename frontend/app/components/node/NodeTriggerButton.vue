@@ -1,30 +1,12 @@
 <script setup lang="ts">
 import type { JobTriggerResult } from "~/api/backend/generated"
-import { useFlowExecutionEvent } from "~/composables/flow/useFlowExecutionSse.ts"
+import { useNodeTriggerStateMachine } from "~/composables/node/useNodeTriggerStateMachine.ts"
 
 const emit = defineEmits<{
 	(e: "trigger", input: object[]): Promise<JobTriggerResult | undefined>
 }>()
 
-const triggering = ref<boolean>(false)
-const runningJobId = ref<string | null>()
-
-const onTrigger = async () => {
-	triggering.value = true
-	try {
-		const triggerResult = await emit("trigger", [])
-		runningJobId.value = triggerResult?.jobId ?? null
-	} finally {
-		triggering.value = false
-	}
-}
-
-useFlowExecutionEvent("FlowStarted", (_, data) => {
-	const waitingFor = runningJobId.value
-	if (waitingFor === null || data.jobId === waitingFor) {
-		runningJobId.value = undefined
-	}
-})
+const { loading, onTrigger } = useNodeTriggerStateMachine(data => emit("trigger", data))
 </script>
 
 <template>
@@ -32,8 +14,8 @@ useFlowExecutionEvent("FlowStarted", (_, data) => {
 		icon="i-lucide-play"
 		variant="ghost"
 		size="sm"
-		:disabled="triggering || runningJobId !== undefined"
-		:loading="triggering || runningJobId !== undefined"
+		:disabled="loading"
+		:loading="loading"
 		@click="onTrigger"
 	/>
 </template>

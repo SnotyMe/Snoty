@@ -8,6 +8,7 @@ import { useFlowState } from "~/composables/flow/useFlowState.ts"
 import { useVueFlow } from "@vue-flow/core"
 import type { WorkflowWithNodes } from "~/api/backend/generated"
 import { useFlow } from "~/composables/flow/useFlow.ts"
+import FlowTriggerButton from "~/components/flow/button/FlowTriggerButton.vue"
 
 const flow = defineModel<WorkflowWithNodes>({ required: true })
 
@@ -78,11 +79,14 @@ const { executeImmediate: layoutGraph } = useAsyncState(doLayoutGraph, null, { i
 		:show-fit-view="false"
 		:show-interactive="false"
 	>
-		<div>
-			<ControlButton @click="toggleDrawer(FlowDrawer.Journal)">
-				<UIcon :name="openDrawer === FlowDrawer.Journal ? `i-lucide-scroll-text` : `i-lucide-scroll`"/>
-			</ControlButton>
-			<FlowExportButton :flow="flow"/>
+		<div class="flex vue-flow__controls-horizontal">
+			<FlowTriggerButton/>
+			<div>
+				<ControlButton @click="toggleDrawer(FlowDrawer.Journal)">
+					<UIcon :name="openDrawer === FlowDrawer.Journal ? `i-lucide-scroll-text` : `i-lucide-scroll`"/>
+				</ControlButton>
+				<FlowExportButton :flow="flow"/>
+			</div>
 		</div>
 	</Controls>
 </template>
