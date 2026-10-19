@@ -59,6 +59,7 @@ jobs:
       - name: Build docker image
         run: |
           ./gradlew \
+            -Pfrontend.enabled=false \
             -Pme.snoty.docker.image="ghcr.io/snotyme/snoty-backend-snapshot" \
             -Pme.snoty.docker.tags="${{ needs.get-version.outputs.version }}" \
             -Pme.snoty.github.run="${{github.run_id}}:${{github.run_number}}" \
