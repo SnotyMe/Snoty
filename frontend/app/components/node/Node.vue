@@ -135,7 +135,7 @@ watch(settings, debouncedSettingsUpdate, { deep: true })
 				</div>
 
 				<div class="flex gap-1">
-					<NodeTriggerButton v-if="metadata.input == undefined" @trigger="input => trigger(input)"/>
+					<NodeTriggerButton v-if="metadata.stereotype == NodeMetadataStereotypeEnum.Trigger && (metadata.output == undefined || metadata.output.length == 0)" @trigger="input => trigger(input)"/>
 					<LogLevelSelect
 						v-model="logLevel"
 						class="w-32"
