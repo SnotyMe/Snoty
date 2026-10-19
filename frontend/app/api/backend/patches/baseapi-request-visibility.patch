@@ -1,6 +1,6 @@
-diff --git a/app/api/backend/generated/runtime.ts b/app/api/backend/generated/runtime.ts
---- a/app/api/backend/generated/runtime.ts
-+++ b/app/api/backend/generated/runtime.ts
+diff --git a/frontend/app/api/backend/generated/runtime.ts b/frontend/app/api/backend/generated/runtime.ts
+--- a/frontend/app/api/backend/generated/runtime.ts
++++ b/frontend/app/api/backend/generated/runtime.ts
 @@ -132,7 +132,7 @@ export class BaseAPI {
          return BaseAPI.jsonRegex.test(mime);
      }
