@@ -39,7 +39,7 @@ data class WebhookTriggerNodeOutput(
 	name = "webhook_trigger",
 	displayName = "Webhook Trigger",
 	icon = Icon(name = "lucide-webhook"),
-	stereotype = NodeStereotype.START,
+	stereotype = NodeStereotype.TRIGGER,
 	settingsType = WebhookTriggerNodeSettings::class,
 	outputType = WebhookTriggerNodeOutput::class
 )

@@ -43,7 +43,7 @@ data class RecurringTriggerNodeSettings(
 	name = "recurring_schedule_trigger",
 	displayName = "Recurring Schedule",
 	icon = Icon(name = "lucide-clock"),
-	stereotype = NodeStereotype.START,
+	stereotype = NodeStereotype.TRIGGER,
 	settingsType = RecurringTriggerNodeSettings::class,
 	outputType = Unit::class,
 )

@@ -21,7 +21,6 @@ import me.snoty.backend.wiring.data.NodeOutput
 import me.snoty.backend.wiring.execution.*
 import me.snoty.backend.wiring.flow.FlowRunner
 import me.snoty.backend.wiring.node.NodeHandleContextImpl
-import me.snoty.backend.wiring.node.metadata.NodeStereotype
 import me.snoty.backend.wiring.node.registry.NodeRegistry
 import me.snoty.core.flow.WorkflowWithNodes
 import me.snoty.core.node.FlowNode
@@ -175,11 +174,6 @@ class FlowRunnerImpl(
 				}
 				executeImpl(subspan, nextNode, input, visited + node.id, depth + 1)
 			}
-
-		if (metadata.stereotype != NodeStereotype.START && input.isEmpty() && !metadata.receiveEmptyInput) {
-			logger.debug { "Skipping $nodeLogName because it does not receive empty input." }
-			return node.executeNextNodes(emptyList()).onCompletion { span.end() }
-		}
 
 		val context = NodeHandleContextImpl(
 			koin = koin,

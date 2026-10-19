@@ -9,8 +9,8 @@ import me.snoty.core.node.NodeWithSettings
 const val TYPE_MAP = "map"
 const val TYPE_QUOTE = "quote"
 const val TYPE_EXCEPTION = "exception"
-const val TYPE_WANTS_EMPTY_PROVIDES_NONEMPTY = "wants_empty_provides_nonempty"
-const val TYPE_WANTS_NONEMPTY_PROVIDES_EMPTY = "wants_nonempty_provides_empty"
+const val TYPE_PROVIDES_NONEMPTY = "provides_nonempty"
+const val TYPE_PROVIDES_EMPTY = "provides_empty"
 
 abstract class TestNodeHandler : NodeHandler
 
@@ -57,7 +57,7 @@ open class GlobalMapHandler(
 	}
 }
 
-class WantsEmptyProvidesNonEmptyHandler : GlobalMapHandler() {
+class ProvidesNonEmptyHandler : GlobalMapHandler() {
 	companion object {
 		const val OUTPUT = "non-empty"
 	}
@@ -69,12 +69,10 @@ class WantsEmptyProvidesNonEmptyHandler : GlobalMapHandler() {
 	}
 }
 
-class WantsNonEmptyProvidesEmptyHandler : GlobalMapHandler() {
+class ProvidesEmptyHandler : GlobalMapHandler() {
 	context(_: NodeHandleContext)
-	override suspend fun process(node: NodeWithSettings, input: NodeInput) =
-		if (input.isNotEmpty()) {
-			super.processImpl(node, input)
-			iterableStructOutput<Unit>(emptyList())
-		}
-		else error("Expected non-empty input, got: $input")
+	override suspend fun process(node: NodeWithSettings, input: NodeInput): NodeOutput {
+		super.processImpl(node, input)
+		return iterableStructOutput<Unit>(emptyList())
+	}
 }

@@ -14,7 +14,7 @@ import NodeSettings from "~/components/node/NodeSettings.vue"
 
 import "@vue-flow/node-resizer/dist/style.css"
 import LogLevelSelect from "~/components/primitives/LogLevelSelect.vue"
-import type { StandaloneNode, StandaloneNodeLogLevelEnum } from "~/api/backend/generated"
+import { NodeMetadataStereotypeEnum, type StandaloneNode, type StandaloneNodeLogLevelEnum } from "~/api/backend/generated"
 import NodeDeleteButton from "~/components/node/NodeDeleteButton.vue"
 import { useFlowNode } from "~/composables/node/useFlowNode"
 import { useDebouncedAction } from "~/composables/utils/useDebouncedAction"
@@ -82,7 +82,7 @@ watch(settings, debouncedSettingsUpdate, { deep: true })
 		:class="{ 'animate-highlight': highlight }"
 	>
 		<Handle
-			v-if="metadata?.input"
+			v-if="metadata?.input || (metadata && metadata.stereotype != NodeMetadataStereotypeEnum.Trigger)"
 			type="target"
 			:position="Position.Left"
 			class="handle size-2 rounded border border-inverted"

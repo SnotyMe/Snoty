@@ -24,7 +24,7 @@ import org.koin.core.annotation.Single
 	name = "http",
 	displayName = "HTTP",
 	icon = Icon(name = "material-symbols-http-rounded"),
-	stereotype = NodeStereotype.START,
+	stereotype = NodeStereotype.MIDDLE,
 	settingsType = HttpNodeSettings::class,
 	inputType = HttpNodeInput::class,
 	outputType = HttpNodeOutput::class,

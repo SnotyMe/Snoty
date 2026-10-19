@@ -62,14 +62,12 @@ fun nodeMetadata(
 	type: NodeType,
 	stereotype: NodeStereotype = NodeStereotype.MIDDLE,
 	settingsClass: KClass<out NodeSettings> = EmptyNodeSettings::class,
-	receiveEmptyInput: Boolean = false,
 ) = NodeMetadata(
 	type = type,
 	displayName = "Test Node",
 	stereotype = stereotype,
 	settings = emptyList(),
 	settingsClass = settingsClass,
-	receiveEmptyInput = receiveEmptyInput,
 	input = null,
 	output = null
 )
@@ -78,10 +76,8 @@ fun nodeMetadata(
 	name: String,
 	stereotype: NodeStereotype = NodeStereotype.MIDDLE,
 	settingsClass: KClass<out NodeSettings> = EmptyNodeSettings::class,
-	receiveEmptyInput: Boolean = false,
 ) = nodeMetadata(
 	type = NodeType(name),
 	stereotype,
 	settingsClass,
-	receiveEmptyInput,
 )

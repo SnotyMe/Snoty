@@ -2227,9 +2227,6 @@ public final class me/snoty/backend/wiring/node/NodeSettingsKt {
 public abstract interface class me/snoty/backend/wiring/node/NodeUpdatedHook : me/snoty/backend/hooks/LifecycleHook {
 }
 
-public abstract interface annotation class me/snoty/backend/wiring/node/ReceiveEmptyInput : java/lang/annotation/Annotation {
-}
-
 public abstract interface annotation class me/snoty/backend/wiring/node/RegisterNode : java/lang/annotation/Annotation {
 	public abstract fun displayName ()Ljava/lang/String;
 	public abstract fun icon ()Lme/snoty/backend/wiring/node/Icon;
@@ -2242,8 +2239,8 @@ public abstract interface annotation class me/snoty/backend/wiring/node/Register
 
 public final class me/snoty/backend/wiring/node/metadata/NodeMetadata {
 	public static final field Companion Lme/snoty/backend/wiring/node/metadata/NodeMetadata$Companion;
-	public synthetic fun <init> (Ljava/lang/String;Lme/snoty/backend/metadata/Icon;Ljava/lang/String;Lme/snoty/backend/wiring/node/metadata/NodeStereotype;Ljava/util/List;Lkotlin/reflect/KClass;Ljava/util/List;ZLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (Ljava/lang/String;Lme/snoty/backend/metadata/Icon;Ljava/lang/String;Lme/snoty/backend/wiring/node/metadata/NodeStereotype;Ljava/util/List;Lkotlin/reflect/KClass;Ljava/util/List;ZLjava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Lme/snoty/backend/metadata/Icon;Ljava/lang/String;Lme/snoty/backend/wiring/node/metadata/NodeStereotype;Ljava/util/List;Lkotlin/reflect/KClass;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Lme/snoty/backend/metadata/Icon;Ljava/lang/String;Lme/snoty/backend/wiring/node/metadata/NodeStereotype;Ljava/util/List;Lkotlin/reflect/KClass;Ljava/util/List;Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Lme/snoty/backend/metadata/Icon;
 	public final fun component3-EVnYJLk ()Ljava/lang/String;
@@ -2251,16 +2248,14 @@ public final class me/snoty/backend/wiring/node/metadata/NodeMetadata {
 	public final fun component5 ()Ljava/util/List;
 	public final fun component6 ()Lkotlin/reflect/KClass;
 	public final fun component7 ()Ljava/util/List;
-	public final fun component8 ()Z
-	public final fun component9 ()Ljava/util/List;
-	public final fun copy-Ou2TtAk (Ljava/lang/String;Lme/snoty/backend/metadata/Icon;Ljava/lang/String;Lme/snoty/backend/wiring/node/metadata/NodeStereotype;Ljava/util/List;Lkotlin/reflect/KClass;Ljava/util/List;ZLjava/util/List;)Lme/snoty/backend/wiring/node/metadata/NodeMetadata;
-	public static synthetic fun copy-Ou2TtAk$default (Lme/snoty/backend/wiring/node/metadata/NodeMetadata;Ljava/lang/String;Lme/snoty/backend/metadata/Icon;Ljava/lang/String;Lme/snoty/backend/wiring/node/metadata/NodeStereotype;Ljava/util/List;Lkotlin/reflect/KClass;Ljava/util/List;ZLjava/util/List;ILjava/lang/Object;)Lme/snoty/backend/wiring/node/metadata/NodeMetadata;
+	public final fun component8 ()Ljava/util/List;
+	public final fun copy-ir2lBTA (Ljava/lang/String;Lme/snoty/backend/metadata/Icon;Ljava/lang/String;Lme/snoty/backend/wiring/node/metadata/NodeStereotype;Ljava/util/List;Lkotlin/reflect/KClass;Ljava/util/List;Ljava/util/List;)Lme/snoty/backend/wiring/node/metadata/NodeMetadata;
+	public static synthetic fun copy-ir2lBTA$default (Lme/snoty/backend/wiring/node/metadata/NodeMetadata;Ljava/lang/String;Lme/snoty/backend/metadata/Icon;Ljava/lang/String;Lme/snoty/backend/wiring/node/metadata/NodeStereotype;Ljava/util/List;Lkotlin/reflect/KClass;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lme/snoty/backend/wiring/node/metadata/NodeMetadata;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDisplayName ()Ljava/lang/String;
 	public final fun getIcon ()Lme/snoty/backend/metadata/Icon;
 	public final fun getInput ()Ljava/util/List;
 	public final fun getOutput ()Ljava/util/List;
-	public final fun getReceiveEmptyInput ()Z
 	public final fun getSettings ()Ljava/util/List;
 	public final fun getSettingsClass ()Lkotlin/reflect/KClass;
 	public final fun getStereotype ()Lme/snoty/backend/wiring/node/metadata/NodeStereotype;
@@ -2280,7 +2275,7 @@ public final class me/snoty/backend/wiring/node/metadata/NodeMetadataUtilsKt {
 public final class me/snoty/backend/wiring/node/metadata/NodeStereotype : java/lang/Enum {
 	public static final field END Lme/snoty/backend/wiring/node/metadata/NodeStereotype;
 	public static final field MIDDLE Lme/snoty/backend/wiring/node/metadata/NodeStereotype;
-	public static final field START Lme/snoty/backend/wiring/node/metadata/NodeStereotype;
+	public static final field TRIGGER Lme/snoty/backend/wiring/node/metadata/NodeStereotype;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getLogOutput ()Z
 	public static fun valueOf (Ljava/lang/String;)Lme/snoty/backend/wiring/node/metadata/NodeStereotype;

@@ -45,7 +45,6 @@ data class HasDiff(
 	inputType = EmptySchema::class,
 	outputType = EmptySchema::class,
 )
-@ReceiveEmptyInput
 @Single
 class DiffInjectorNodeHandler(
 	entityStateService: EntityStateService,

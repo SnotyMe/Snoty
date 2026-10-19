@@ -23,7 +23,7 @@ data class EmitJsonSettings(
 	displayName = "Emit JSON",
 	icon = Icon(name = "lucide-braces"),
 	settingsType = EmitJsonSettings::class,
-	stereotype = NodeStereotype.START,
+	stereotype = NodeStereotype.MIDDLE,
 	outputType = EmptySchema::class,
 )
 @Single

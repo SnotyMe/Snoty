@@ -32,7 +32,7 @@ fun relationalFlow(
 object EmitHandler : NodeHandler {
 	val metadata = nodeMetadata(
 		"emit",
-		NodeStereotype.START,
+		NodeStereotype.MIDDLE,
 	)
 
 	context(_: NodeHandleContext)

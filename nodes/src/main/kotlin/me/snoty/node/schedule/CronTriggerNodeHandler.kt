@@ -25,7 +25,7 @@ data class CronTriggerNodeSettings(
 	name = "cron_schedule_trigger",
 	displayName = "CRON Schedule",
 	icon = Icon(name = "lucide-calendar-clock"),
-	stereotype = NodeStereotype.START,
+	stereotype = NodeStereotype.TRIGGER,
 	settingsType = CronTriggerNodeSettings::class,
 	outputType = Unit::class,
 )

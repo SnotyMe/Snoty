@@ -18,6 +18,8 @@ inline fun <reified T : Any, reified Settings : NodeSettings> eachWithSettings(
 	node: NodeWithSettings,
 	block: (T, Settings) -> Unit
 ): NodeOutput {
+	if (input.isEmpty()) return emptyList()
+
 	val settings = node.getConfig<Settings>()
 
 	for (element in input) {
@@ -40,16 +42,12 @@ inline fun <reified T : Any, reified Settings : NodeSettings> mapInputWithSettin
 	node: NodeWithSettings,
 	block: (T, Settings) -> NodeOutput
 ): NodeOutput {
+	if (input.isEmpty()) return emptyList()
+
 	val settings = node.getConfig<Settings>()
 
 	return input.flatMap {
 		val data = it.get<T>()
 		block(data, settings)
 	}
-}
-
-inline fun <reified Settings : NodeSettings> NodeInput.mapWithSettings(node: NodeWithSettings, block: (Settings) -> NodeOutput): NodeOutput {
-	val settings = node.getConfig<Settings>()
-
-	return this.flatMap { block(settings) }
 }

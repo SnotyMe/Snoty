@@ -14,7 +14,7 @@ abstract class NodeServiceSpec {
 	private val type = NodeType("mytype")
 
 	protected val nodeRegistry = NodeRegistryImpl().apply {
-		registerHandler(nodeMetadata(type, stereotype = NodeStereotype.START), NoOpNodeHandler)
+		registerHandler(nodeMetadata(type, stereotype = NodeStereotype.TRIGGER), NoOpNodeHandler)
 	}
 	
 	// TODO: test other methods

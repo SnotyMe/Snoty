@@ -21,7 +21,7 @@ import org.koin.core.annotation.Single
 	name = "webuntis_exams",
 	displayName = "WebUntis Exams",
 	icon = Icon(name = "arcticons-untis-mobile", color = "#FF6033"),
-	stereotype = NodeStereotype.START,
+	stereotype = NodeStereotype.MIDDLE,
 	settingsType = WebUntisExamSettings::class,
 	outputType = MappedUntisExam::class,
 )

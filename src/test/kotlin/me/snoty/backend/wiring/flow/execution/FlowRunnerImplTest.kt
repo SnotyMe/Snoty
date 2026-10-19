@@ -55,14 +55,14 @@ class FlowRunnerImplTest {
 	}
 
 	private val mapHandler = GlobalMapHandler()
-	private val wantsEmptyProvidesNonEmptyHandler = WantsEmptyProvidesNonEmptyHandler()
-	private val wantsNonEmptyProvidesEmptyHandler = WantsNonEmptyProvidesEmptyHandler()
+	private val providesNonEmptyHandler = ProvidesNonEmptyHandler()
+	private val providesEmptyHandler = ProvidesEmptyHandler()
 	private val nodeRegistry = NodeRegistryImpl().apply {
-		registerHandler(nodeMetadata(name = TYPE_MAP, receiveEmptyInput = false), mapHandler)
-		registerHandler(nodeMetadata(name = TYPE_QUOTE, receiveEmptyInput = false), QuoteHandler)
-		registerHandler(nodeMetadata(name = TYPE_EXCEPTION, receiveEmptyInput = false), ExceptionHandler)
-		registerHandler(nodeMetadata(name = TYPE_WANTS_EMPTY_PROVIDES_NONEMPTY, receiveEmptyInput = true), wantsEmptyProvidesNonEmptyHandler)
-		registerHandler(nodeMetadata(name = TYPE_WANTS_NONEMPTY_PROVIDES_EMPTY, receiveEmptyInput = false), wantsNonEmptyProvidesEmptyHandler)
+		registerHandler(nodeMetadata(name = TYPE_MAP), mapHandler)
+		registerHandler(nodeMetadata(name = TYPE_QUOTE), QuoteHandler)
+		registerHandler(nodeMetadata(name = TYPE_EXCEPTION), ExceptionHandler)
+		registerHandler(nodeMetadata(name = TYPE_PROVIDES_NONEMPTY), providesNonEmptyHandler)
+		registerHandler(nodeMetadata(name = TYPE_PROVIDES_EMPTY), providesEmptyHandler)
 		registerEmitHandler()
 	}
 	private val otel = createOpenTelemetry()
@@ -217,25 +217,24 @@ class FlowRunnerImplTest {
 	}
 	
 	@Test
-	fun `test receive empty input transitively - #225`() = runBlocking {
-		val nodex = node(TYPE_WANTS_EMPTY_PROVIDES_NONEMPTY)
+	fun `test receive empty input transitively`() = runBlocking {
+		val nodex = node(TYPE_PROVIDES_NONEMPTY)
 		val nodex1 = node(TYPE_QUOTE, next = listOf(nodex))
-		val nodex2 = node(TYPE_WANTS_EMPTY_PROVIDES_NONEMPTY, next = listOf(nodex1))
-		val nodex3 = node(TYPE_WANTS_NONEMPTY_PROVIDES_EMPTY, next = listOf(nodex2)) // also skipped
-		val nodex4 = node(TYPE_WANTS_NONEMPTY_PROVIDES_EMPTY, next = listOf(nodex3)) // skipped
-		val emit = emitNode(nodex4) // won't emit anything
+		val nodex2 = node(TYPE_PROVIDES_NONEMPTY, next = listOf(nodex1))
+		val nodex3 = node(TYPE_PROVIDES_EMPTY, next = listOf(nodex2))
+		val emit = emitNode(nodex3)
 
-		val flow = relationalFlow(emit, nodex4, nodex3, nodex2, nodex1, nodex)
+		val flow = relationalFlow(emit, nodex3, nodex2, nodex1, nodex)
 		println(flow.nodes.joinToString("\n") { "${it.id}: ${it.type.value}" })
 
 		runner.executeStartNode("receive empty input transitively", flow, emptyList())
 
-		assertFalse(nodex4.id in wantsNonEmptyProvidesEmptyHandler)
-		assertFalse(nodex3.id in wantsNonEmptyProvidesEmptyHandler)
-		assertEquals(emptyList<SimpleIntermediateData>(), wantsEmptyProvidesNonEmptyHandler[nodex2.id])
+		assertTrue(nodex3.id in providesEmptyHandler)
+		assertTrue(nodex2.id in providesNonEmptyHandler)
+		assertEquals(emptyList<SimpleIntermediateData>(), providesNonEmptyHandler[nodex2.id])
 		assertEquals(
-			listOf(SimpleIntermediateData("'${WantsEmptyProvidesNonEmptyHandler.OUTPUT}'")),
-			wantsEmptyProvidesNonEmptyHandler[nodex.id]
+			listOf(SimpleIntermediateData("'${ProvidesNonEmptyHandler.OUTPUT}'")),
+			providesNonEmptyHandler[nodex.id]
 		)
 	}
 }

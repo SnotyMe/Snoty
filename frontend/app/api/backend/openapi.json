@@ -2205,7 +2205,7 @@
                     "stereotype": {
                         "type": "string",
                         "enum": [
-                            "START",
+                            "TRIGGER",
                             "MIDDLE",
                             "END"
                         ]
@@ -2224,9 +2224,6 @@
                         "items": {
                             "$ref": "#/components/schemas/SchemaField"
                         }
-                    },
-                    "receiveEmptyInput": {
-                        "type": "boolean"
                     },
                     "output": {
                         "type": [
