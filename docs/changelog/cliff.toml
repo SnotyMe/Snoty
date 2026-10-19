@@ -12,8 +12,34 @@ body = """
 {%- endif %} - by @{{ commit.remote.username }} in {% if extra.explicit_repo %}{{ repo }}@{% endif %}{{ commit.id }}
 {%- endmacro -%}
 
+{%- macro grouped_commits(commits, with_scope) -%}
+{% for group, commits in commits | group_by(attribute="group") %}
+    {%- if commits | length == 0 -%}{% break %}{%- endif -%}
+    ### {{ group | striptags | trim | upper_first }}
+    {%- for commit in commits | filter(attribute="breaking", value=true) -%}
+        {%- if not commit.scope %}
+            - {% if commit.breaking %}[**breaking**] {% endif %}\
+                {{ self::commit_line(commit=commit) }}
+        {%- endif -%}
+    {%- endfor -%}
+    {%- for commit in commits
+    | filter(attribute="scope")
+    | sort(attribute="breaking")
+    | sort(attribute="scope") %}
+        - {% if commit.breaking %}[**breaking**] {% endif %}{% if with_scope %}**{{commit.scope}}**: {% endif %}\
+            {{ self::commit_line(commit=commit) }}
+    {%- endfor %}
+    {% for commit in commits | sort(attribute="breaking") -%}
+        {%- if not commit.scope and not commit.breaking -%}
+            - {% if commit.breaking %}[**breaking**] {% endif %}\
+                {{ self::commit_line(commit=commit) }}
+        {% endif -%}
+    {%- endfor %}
+    {% endfor -%}
+{%- endmacro -%}
+
 ## Nodes
-{% for scope, commits in commits | group_by(attribute="scope") %}
+{%- for scope, commits in commits | group_by(attribute="scope") %}
     {%- if scope | truncate(length=1) != scope | upper | truncate(length=1) -%}{% continue %}{%- endif %}
     ### {{ scope }}
     {%- for group, commit in commits | group_by(attribute="group") %}
@@ -22,32 +48,26 @@ body = """
             {{ self::commit_line(commit=commit) }}
         {%- endfor %}
     {%- endfor %}
-{% endfor %}
+{%- endfor %}
+
+## Frontend
+{{ self::grouped_commits(commits=commits | filter(attribute="scope", value="frontend"), with_scope=false) -}}
+
+## Backend
+{% set_global backend_commits = [] %}
+{%- for commit in commits -%}
+    {%- set scope = commit.scope | default(value="") -%}
+    {%- if scope not in ["frontend", "deps"] and (not scope or scope | truncate(length=1) != scope | upper | truncate(length=1)) -%}
+        {% set_global backend_commits = backend_commits | concat(with=[commit]) %}
+    {%- endif -%}
+{%- endfor -%}
+
+{{ self::grouped_commits(commits=backend_commits, with_scope=true) -}}
+
 ## Dependencies
 {%- for commit in commits | filter(attribute="scope", value="deps") %}
     - {% if commit.breaking %}[**breaking**] {% endif %} {{ commit.message }} - {{ commit.id }}
 {%- endfor %}
-
-## Backend
-{% for group, commits in commits | group_by(attribute="group") %}
-    {%- if commits | filter(attribute="scope", value="deps") | length == commits | length -%}{% break %}{%- endif -%}
-    ### {{ group | striptags | trim | upper_first }}
-    {%- for commit in commits
-    | filter(attribute="scope")
-    | sort(attribute="scope") -%}
-        {%- if commit.scope == "deps" -%}{% continue %}{%- endif -%}
-        {%- if commit.scope | truncate(length=1) == commit.scope | upper | truncate(length=1) -%}{% continue %}{%- endif %}
-        - {% if commit.breaking %}[**breaking**] {% endif %}**{{commit.scope}}**: \
-            {{ self::commit_line(commit=commit) }}
-    {%- endfor %}
-    {% for commit in commits -%}
-        {%- if not commit.scope -%}
-            - {% if commit.breaking %}[**breaking**] {% endif %}\
-                {{ self::commit_line(commit=commit) }}
-        {% endif -%}
-    {%- endfor -%}
-    {%- if loop.last %}{% else %}\n{% endif %}\
-{% endfor %}\n
 """
 
 # Remove leading and trailing whitespaces from the changelog's body.
