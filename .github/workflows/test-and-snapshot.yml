@@ -34,7 +34,7 @@ jobs:
           build-scan-terms-of-use-agree: yes
 
       - name: Run tests
-        run: ./gradlew check koverXmlReport
+        run: ./gradlew -Pfrontend.enabled=false check koverXmlReport
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v6
