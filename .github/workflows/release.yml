@@ -72,7 +72,7 @@ jobs:
           ./gradlew {:conventions-extension:,}publishAllPublicationsToSnoty"${repository}"Repository
 
       - name: Push docker image
-        run: docker push --all-tags ghcr.io/snotyme/snoty-backend
+        run: docker push --all-tags ghcr.io/snotyme/snoty
 
       - name: Upload JAR
         uses: actions/upload-artifact@v4

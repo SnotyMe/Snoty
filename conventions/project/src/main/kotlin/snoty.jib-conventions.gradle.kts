@@ -6,7 +6,7 @@ plugins {
 
 jib {
 	val fullImageName = providers.gradleProperty("me.snoty.docker.image")
-		.getOrElse("ghcr.io/snotyme/snoty-backend")
+		.getOrElse("ghcr.io/snotyme/snoty")
 
 	from {
 		image = "eclipse-temurin:25-jre-alpine"
