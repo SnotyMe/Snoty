@@ -14,6 +14,7 @@ import kotlinx.serialization.modules.plus
 import kotlinx.serialization.modules.polymorphic
 import me.snoty.backend.logging.KMDC
 import me.snoty.backend.logging.NodeLogAppender
+import me.snoty.backend.observability.FLOW_ID
 import me.snoty.backend.observability.JOB_ID
 import me.snoty.backend.scheduling.FlowTriggerReason
 import me.snoty.backend.test.*
@@ -90,6 +91,7 @@ class FlowRunnerImplTest {
 	private suspend fun FlowRunnerImpl.executeStartNode(jobId: String, flow: WorkflowWithNodes, input: NodeInput) {
 		// set in the scheduler
 		KMDC.put(JOB_ID, jobId)
+		KMDC.put(FLOW_ID, flow.id.value)
 		withContext(MDCContext()) {
 			execute(jobId, FlowTriggerReason.Unknown, logger, Level.DEBUG, flow, flow.nodes.first(), input)
 		}
