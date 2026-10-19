@@ -37,7 +37,7 @@ publishing {
 			from(components["versionCatalog"])
 			pom {
 				scm {
-					url = "scm:git:https://github.com/SnotyMe/snoty-backend"
+					url = "scm:git:https://github.com/SnotyMe/Snoty"
 				}
 			}
 			artifactId = "versions"
