@@ -1,4 +1,4 @@
-package me.snoty.backend.database.mongo.tracing
+package me.snoty.backend.database.mongo.observability.tracing
 
 import com.mongodb.RequestContext
 import java.util.stream.Stream

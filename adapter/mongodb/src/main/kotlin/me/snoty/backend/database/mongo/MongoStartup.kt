@@ -3,10 +3,10 @@ package me.snoty.backend.database.mongo
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.MongoCredential
+import com.mongodb.event.CommandListener
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import io.github.oshai.kotlinlogging.KotlinLogging
-import me.snoty.backend.database.mongo.tracing.ContextProvider
-import me.snoty.backend.database.mongo.tracing.MongoTracing
+import me.snoty.backend.database.mongo.observability.tracing.ContextProvider
 import org.bson.codecs.configuration.CodecRegistry
 import org.koin.core.annotation.Single
 import com.mongodb.client.MongoClient as SyncMongoClient
@@ -20,7 +20,7 @@ data class MongoClients(
 )
 
 @Single
-class MongoStartup(private val mongoTracing: MongoTracing) {
+class MongoStartup(private val commandListeners: List<CommandListener>) {
 	fun createMongoClients(config: MongoConfig, codecRegistry: CodecRegistry, dbName: String = MONGO_DB_NAME): MongoClients {
 		val logger = KotlinLogging.logger {}
 
@@ -45,7 +45,7 @@ class MongoStartup(private val mongoTracing: MongoTracing) {
 
 		val tracedClientSettings = createClientSettings {
 			contextProvider(ContextProvider())
-			addCommandListener(mongoTracing)
+			commandListenerList(commandListeners)
 		}
 		val mongoClient = CoroutineMongoClient.create(tracedClientSettings)
 		val mongoDB = mongoClient.getDatabase(dbName)

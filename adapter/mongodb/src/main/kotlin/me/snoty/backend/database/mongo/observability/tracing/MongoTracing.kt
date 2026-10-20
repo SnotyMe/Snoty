@@ -1,4 +1,4 @@
-package me.snoty.backend.database.mongo.tracing
+package me.snoty.backend.database.mongo.observability.tracing
 
 import com.mongodb.MongoSocketException
 import com.mongodb.RequestContext
@@ -11,14 +11,13 @@ import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanBuilder
 import io.opentelemetry.semconv.ServerAttributes
-import me.snoty.backend.database.mongo.tracing.filter.MongoTracingFilter
+import me.snoty.backend.database.mongo.observability.filter.MongoObservabilityFilter
+import me.snoty.backend.database.mongo.observability.getCollectionName
 import me.snoty.backend.observability.subspan
-import me.snoty.backend.utils.orNull
-import org.bson.BsonValue
 import org.koin.core.annotation.Single
 
 @Single
-class MongoTracing(openTelemetry: OpenTelemetry, private val featureFlags: MongoTracingFeatureFlags, private val filters: List<MongoTracingFilter>) : CommandListener {
+class MongoTracing(openTelemetry: OpenTelemetry, private val featureFlags: MongoTracingFeatureFlags, private val filters: List<MongoObservabilityFilter>) : CommandListener {
 	private val tracer = openTelemetry.getTracer("mongo")
 
 	override fun commandStarted(event: CommandStartedEvent) {
@@ -85,15 +84,6 @@ class MongoTracing(openTelemetry: OpenTelemetry, private val featureFlags: Mongo
 	companion object {
 		private val logger = KotlinLogging.logger {}
 
-		// See https://docs.mongodb.com/manual/reference/command for the command reference
-		val COMMANDS_WITH_COLLECTION_NAME: Set<String> = LinkedHashSet(
-			mutableListOf(
-				"aggregate", "count", "distinct", "mapReduce", "geoSearch", "delete", "find", "findAndModify",
-				"insert", "update", "collMod", "compact", "convertToCapped", "create", "createIndexes", "drop",
-				"dropIndexes", "killCursors", "listIndexes", "reIndex"
-			)
-		)
-
 		private fun spanFromContext(
 			context: RequestContext
 		): Span? {
@@ -104,18 +94,6 @@ class MongoTracing(openTelemetry: OpenTelemetry, private val featureFlags: Mongo
 			}
 			logger.trace { "No span was found - will not create any child spans" }
 			return null
-		}
-
-		/**
-		 * @return trimmed string from `bsonValue` or null if the trimmed string was
-		 * empty or the value wasn't a string
-		 */
-		fun getNonEmptyBsonString(bsonValue: BsonValue?): String? {
-			if (bsonValue == null || !bsonValue.isString) {
-				return null
-			}
-			val stringValue = bsonValue.asString().value.trim { it <= ' ' }
-			return stringValue.orNull()
 		}
 
 		fun getSpanName(commandName: String, collectionName: String?): String = when {

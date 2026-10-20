@@ -1,7 +1,6 @@
 package me.snoty.backend.database.mongo
 
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
-import io.mockk.mockk
 import me.snoty.backend.database.mongo.migrations.provideMigrationsCodec
 import me.snoty.backend.test.getClassNameFromBlock
 import me.snoty.backend.utils.bson.bsonTypeClassMap
@@ -13,7 +12,7 @@ import org.testcontainers.mongodb.MongoDBContainer
 object MongoTest {
 	@Container
 	val mongoContainer = MongoDBContainer("mongo:8.0")
-	private val mongoStartup = MongoStartup(mockk(relaxed = true))
+	private val mongoStartup = MongoStartup(emptyList())
 	val config: MongoConfig
 
 	init {

@@ -2,6 +2,8 @@ package me.snoty.backend.database.mongo
 
 import dev.openfeature.sdk.Client
 import me.snoty.backend.config.Environment
+import me.snoty.backend.database.mongo.observability.logging.MongoCommandLogger
+import me.snoty.backend.database.mongo.observability.tracing.MongoTracing
 import me.snoty.backend.featureflags.LogFeatureFlagsContainer
 import me.snoty.backend.featureflags.LogLevelFeatureFlag
 import me.snoty.backend.featureflags.logLevelFlag
@@ -17,9 +19,9 @@ class MongoLogFeatureFlags(override val environment: Environment, override val c
 	)
 	override val logLevelFeatureFlags: List<LogLevelFeatureFlag> = listOf(
 		logLevelFlag(MONGO, MONGO_LOGGER),
-		logLevelFlag(MONGO_COMMANDS, MONGO_COMMANDS_LOGGER),
+		logLevelFlag(MONGO_COMMANDS, MongoCommandLogger::class.java.packageName, ifDev = Level.TRACE),
 		// excessive logging, therefore set to INFO in all environments, can be changed to DEBUG if needed
-		logLevelFlag("$MONGO.tracing", "me.snoty.backend.database.mongo.tracing", ifDev = Level.INFO, default = Level.INFO),
+		logLevelFlag("$MONGO.tracing", MongoTracing::class.java.packageName, ifDev = Level.INFO, default = Level.INFO),
 		jobRunr
 	)
 
@@ -27,6 +29,5 @@ class MongoLogFeatureFlags(override val environment: Environment, override val c
 		const val MONGO = "mongo"
 		const val MONGO_LOGGER = "org.mongodb.driver"
 		const val MONGO_COMMANDS = "$MONGO.commands"
-		const val MONGO_COMMANDS_LOGGER = "$MONGO_LOGGER.protocol.command"
 	}
 }

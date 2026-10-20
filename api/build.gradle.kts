@@ -37,6 +37,7 @@ dependencies { with(libs) {
     api(monitoring.ktor.opentelemetry)
 
     api(libraries.openfeature)
+    api(libraries.caffeine)
 
     // DO NOT use in anything but bson-related code
     implementation(database.mongodb)

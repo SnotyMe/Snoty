@@ -1,4 +1,4 @@
-package me.snoty.backend.database.mongo.tracing
+package me.snoty.backend.database.mongo.observability.tracing
 
 import dev.openfeature.sdk.Client
 import me.snoty.backend.featureflags.FeatureFlagBoolean
