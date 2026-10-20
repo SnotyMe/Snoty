@@ -4,7 +4,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import me.snoty.backend.scheduling.JobTriggerResult
 import me.snoty.backend.scheduling.Scheduler
 import me.snoty.backend.scheduling.SnotyJob
-import org.jobrunr.configuration.JobRunr
 import org.jobrunr.jobs.Job
 import org.jobrunr.jobs.states.StateName
 import org.jobrunr.scheduling.JobBuilder
@@ -23,20 +22,22 @@ import kotlin.reflect.jvm.isAccessible
 @Single
 @Named("adapter")
 class JobRunrScheduler(
-	private val jobRunrConfigurer: JobRunrConfigurer,
+	private val jobRequestScheduler: JobRequestScheduler,
+	private val backgroundJobServer: BackgroundJobServer,
 	private val storageProvider: SnotyJobRunrStorageProvider,
+	private val jobRunrReconnecter: JobRunrReconnecter,
 ) : Scheduler {
 	private val logger = KotlinLogging.logger {}
 
-	private lateinit var jobRequestScheduler: JobRequestScheduler
-	private lateinit var backgroundJobServer: BackgroundJobServer
 	private lateinit var build: KFunction<Job>
 	private lateinit var saveJob: KFunction<*>
 
 	@Suppress("UNCHECKED_CAST")
 	override fun start() {
-		jobRequestScheduler = jobRunrConfigurer.initialize().jobRequestScheduler
-		backgroundJobServer = JobRunr.getBackgroundJobServer()
+		logger.info { "Starting JobRunr Scheduler..." }
+
+		backgroundJobServer.start()
+		jobRunrReconnecter.startReconnectLoop()
 
 		build = JobBuilder::class
 			.declaredMemberFunctions
@@ -51,6 +52,8 @@ class JobRunrScheduler(
 			.apply {
 				isAccessible = true
 			}
+
+		logger.info { "JobRunr Scheduler started!" }
 	}
 
 	override fun scheduleRecurringJob(job: SnotyJob) {

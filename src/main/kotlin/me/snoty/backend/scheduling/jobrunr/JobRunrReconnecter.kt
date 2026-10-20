@@ -2,7 +2,7 @@ package me.snoty.backend.scheduling.jobrunr
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import me.snoty.backend.utils.MANAGEMENT_EXECUTOR
-import org.jobrunr.configuration.JobRunr
+import org.jobrunr.server.BackgroundJobServer
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 import java.util.concurrent.ScheduledExecutorService
@@ -14,12 +14,10 @@ import kotlin.concurrent.withLock
 @Single
 class JobRunrReconnecter(
 	@Named(MANAGEMENT_EXECUTOR)
-	private val managementPool: ScheduledExecutorService
+	private val managementPool: ScheduledExecutorService,
+	private val backgroundJobServer: BackgroundJobServer
 ) {
 	private val logger = KotlinLogging.logger {}
-
-	// no other way of getting it unfortunately, the configuration result doesn't expose it
-	private fun getBackgroundJobServer() = JobRunr.getBackgroundJobServer()
 
 	private val lock = ReentrantLock()
 	private var reconnectThread: Thread? = null
@@ -34,8 +32,6 @@ class JobRunrReconnecter(
 	}
 
 	fun checkAndReconnect() {
-		val backgroundJobServer = getBackgroundJobServer()
-
 		if (backgroundJobServer.isRunning) return
 
 		lock.withLock {

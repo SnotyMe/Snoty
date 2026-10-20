@@ -23,7 +23,7 @@ junit = "5.12.2"
 testcontainers = "2.0.2"
 ktor = "3.5.2"
 
-jobrunr = "8.5.0"
+jobrunr = "9.0.2"
 
 [plugins]
 doctor = { id = "com.osacky.doctor", version = "0.12.0" }
