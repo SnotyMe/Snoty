@@ -11,7 +11,7 @@ plugins {
 val frontendDir = layout.projectDirectory.dir("frontend")
 
 node {
-    version = "24.21.0"
+    version = "24.22.1"
     download = true
     distBaseUrl = null
 
