@@ -11,7 +11,10 @@ plugins {
 val frontendDir = layout.projectDirectory.dir("frontend")
 
 node {
-    version = "24.22.1"
+    val dockerfileContent = frontendDir.file("Dockerfile").asFile.readText()
+    val nodeVersionRegex = Regex("FROM node:(\\d+\\.\\d+\\.\\d+)")
+    val nodeVersion = nodeVersionRegex.find(dockerfileContent)?.groupValues?.get(1) ?: error("Node version not found in Dockerfile")
+    version = nodeVersion
     download = true
     distBaseUrl = null
 
