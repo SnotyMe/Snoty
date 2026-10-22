@@ -9,6 +9,7 @@
         "general": "Allgemein",
         "flow": "Flow",
       },
+      "notifications": "Benachrichtigungen",
       "reportIssue": "Problem melden",
       "documentation": "Dokumentation",
       "admin": {

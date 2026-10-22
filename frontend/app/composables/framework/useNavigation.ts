@@ -1,6 +1,7 @@
 import type { NavigationMenuItem } from "@nuxt/ui"
 import { useAuth } from "~/stores/auth"
 import { devBadge } from "~/utils/dev.ts"
+import { useNotificationStore } from "~/stores/notifications.ts"
 
 export const useNavigation = () => {
 	const { t } = useI18n({ useScope: "global" })
@@ -8,6 +9,9 @@ export const useNavigation = () => {
 
 	const { hasRole } = useAuth()
 	const { data: isAdmin } = useAsyncData("role-admin", () => hasRole(ROLE_ADMIN))
+
+	const notificationStore = useNotificationStore()
+	const { count: notificationCount } = storeToRefs(notificationStore)
 
 	const links = computed<[NavigationMenuItem[], NavigationMenuItem[]]>(() => [
 		[
@@ -26,6 +30,18 @@ export const useNavigation = () => {
 				label: t("navigation.page.credentials"),
 				icon: "i-lucide-key-round",
 				to: "/credentials",
+			},
+			{
+				label: t("navigation.page.notifications"),
+				icon: "i-lucide-bell",
+				to: "/notifications",
+				badge: notificationCount.value
+					? ({
+							color: "error",
+							variant: "solid",
+							label: notificationCount.value,
+						})
+					: undefined,
 			},
 			...((isAdmin.value || import.meta.dev)
 				? [

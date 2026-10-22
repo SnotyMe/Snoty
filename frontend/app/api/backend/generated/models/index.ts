@@ -40,6 +40,7 @@ export * from './NodeMetadata';
 export * from './NodePatchRequest';
 export * from './NodePosition';
 export * from './NodeTriggerRequest';
+export * from './Notification';
 export * from './OAuth2TokenResponse';
 export * from './OidcAuthenticationMetadata';
 export * from './PotentiallyAccessibleCredentialDto';

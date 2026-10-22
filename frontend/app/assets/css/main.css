@@ -26,6 +26,19 @@
 			box-shadow: 0 0 3em light-dark(var(--color-surface-900), var(--color-surface-100));
 		}
 	}
+
+	--animate-highlight-stay: highlight-stay 1.25s ease-in-out forwards;
+	@keyframes highlight-stay {
+		0% {
+			box-shadow: 0 0 0 light-dark(var(--color-surface-900), var(--color-surface-100));
+		}
+		50% {
+			box-shadow: 0 0 3em light-dark(var(--color-surface-900), var(--color-surface-100));
+		}
+		100% {
+			box-shadow: 0 0 1em rgb(from light-dark(var(--color-surface-900), var(--color-surface-100)) r g b / 0.5);
+		}
+	}
 }
 
 .vue-flow__panel {

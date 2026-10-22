@@ -7,6 +7,7 @@ apis/NodeDiffinjectorApi.ts
 apis/NodeIcalApi.ts
 apis/NodeMetadataApi.ts
 apis/NodeUnchangedfilterApi.ts
+apis/NodeWebhookTriggerApi.ts
 apis/NotificationApi.ts
 apis/TaskApi.ts
 apis/index.ts
@@ -50,6 +51,7 @@ models/NodeMetadata.ts
 models/NodePatchRequest.ts
 models/NodePosition.ts
 models/NodeTriggerRequest.ts
+models/Notification.ts
 models/OAuth2TokenResponse.ts
 models/OidcAuthenticationMetadata.ts
 models/PotentiallyAccessibleCredentialDto.ts

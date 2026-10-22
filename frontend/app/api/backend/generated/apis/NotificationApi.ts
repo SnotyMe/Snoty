@@ -15,13 +15,20 @@
 
 
 import * as runtime from '../runtime';
+import type {
+  Notification,
+} from '../models/index';
+import {
+    NotificationFromJSON,
+    NotificationToJSON,
+} from '../models/index';
 
 export interface NotificationIdDeleteRequest {
     id: string;
 }
 
-export interface NotificationResolvePutRequest {
-    requestBody?: { [key: string]: string; };
+export interface NotificationIdResolvePutRequest {
+    id: string;
 }
 
 /**
@@ -115,6 +122,50 @@ export class NotificationApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates request options for notificationIdResolvePut without sending the request
+     */
+    async notificationIdResolvePutRequestOpts(requestParameters: NotificationIdResolvePutRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling notificationIdResolvePut().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/notification/{id}/resolve`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        return {
+            path: urlPath,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * 
+     */
+    async notificationIdResolvePutRaw(requestParameters: NotificationIdResolvePutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.notificationIdResolvePutRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * 
+     */
+    async notificationIdResolvePut(requestParameters: NotificationIdResolvePutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.notificationIdResolvePutRaw(requestParameters, initOverrides);
+    }
+
+    /**
      * Creates request options for notificationListGet without sending the request
      */
     async notificationListGetRequestOpts(): Promise<runtime.RequestOpts> {
@@ -136,58 +187,19 @@ export class NotificationApi extends runtime.BaseAPI {
     /**
      * 
      */
-    async notificationListGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async notificationListGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Notification>>> {
         const requestOptions = await this.notificationListGetRequestOpts();
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NotificationFromJSON));
     }
 
     /**
      * 
      */
-    async notificationListGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+    async notificationListGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Notification>> {
         const response = await this.notificationListGetRaw(initOverrides);
         return await response.value();
-    }
-
-    /**
-     * Creates request options for notificationResolvePut without sending the request
-     */
-    async notificationResolvePutRequestOpts(requestParameters: NotificationResolvePutRequest): Promise<runtime.RequestOpts> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-
-        let urlPath = `/notification/resolve`;
-
-        return {
-            path: urlPath,
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: requestParameters['requestBody'],
-        };
-    }
-
-    /**
-     * 
-     */
-    async notificationResolvePutRaw(requestParameters: NotificationResolvePutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        const requestOptions = await this.notificationResolvePutRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * 
-     */
-    async notificationResolvePut(requestParameters: NotificationResolvePutRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.notificationResolvePutRaw(requestParameters, initOverrides);
     }
 
 }

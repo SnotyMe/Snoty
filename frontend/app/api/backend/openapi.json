@@ -252,40 +252,13 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Notification"
+                                    }
                                 }
                             }
                         }
-                    }
-                },
-                "security": [
-                    {
-                        "jwt-auth": []
-                    }
-                ]
-            }
-        },
-        "/notification/resolve": {
-            "put": {
-                "tags": [
-                    "notification"
-                ],
-                "summary": "",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "additionalProperties": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "204": {
-                        "description": ""
                     }
                 },
                 "security": [
@@ -326,6 +299,44 @@
                         "description": ""
                     },
                     "404": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "jwt-auth": []
+                    }
+                ]
+            }
+        },
+        "/notification/{id}/resolve": {
+            "put": {
+                "tags": [
+                    "notification"
+                ],
+                "summary": "",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
                         "description": ""
                     }
                 },
@@ -1692,6 +1703,55 @@
                     "propertyName": "AuthenticationMetadata"
                 }
             },
+            "Notification": {
+                "type": "object",
+                "title": "Notification",
+                "required": [
+                    "id",
+                    "userId",
+                    "attributes",
+                    "lastSeenAt",
+                    "count",
+                    "title"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "attributes": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "resolvedAt": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "lastSeenAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "count": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                }
+            },
             "BuildInfo": {
                 "type": "object",
                 "title": "BuildInfo",
@@ -2206,6 +2266,7 @@
                         "type": "string",
                         "enum": [
                             "TRIGGER",
+                            "START",
                             "MIDDLE",
                             "END"
                         ]

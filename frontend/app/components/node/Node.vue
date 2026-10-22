@@ -24,6 +24,9 @@ import NodeTriggerButton from "~/components/node/NodeTriggerButton.vue"
 
 const { t } = useI18n({ useScope: "local" })
 
+const route = useRoute()
+const highlightedNode = route.query.highlightedNode
+
 const { metadata: nodeMetadata } = useNodeMetadataStore()
 
 const props = defineProps<{
@@ -79,7 +82,7 @@ watch(settings, debouncedSettingsUpdate, { deep: true })
 	<div
 		ref="container"
 		class="h-full"
-		:class="{ 'animate-highlight': highlight }"
+		:class="{ 'animate-highlight': highlight, 'animate-highlight-stay': highlightedNode === data.id }"
 	>
 		<Handle
 			v-if="metadata?.input || (metadata && metadata.stereotype != NodeMetadataStereotypeEnum.Trigger)"
