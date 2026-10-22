@@ -1,16 +1,22 @@
 package me.snoty.backend.notifications
 
 import kotlinx.serialization.json.Json
-import me.snoty.backend.database.sql.utils.UuidTable
+import me.snoty.backend.database.sql.utils.notificationId
 import me.snoty.backend.database.sql.utils.userId
+import me.snoty.core.notification.NotificationId
 import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.core.dao.id.IdTable
 import org.jetbrains.exposed.v1.datetime.CurrentTimestamp
 import org.jetbrains.exposed.v1.datetime.timestamp
 import org.jetbrains.exposed.v1.json.jsonb
 import org.koin.core.annotation.Single
+import kotlin.uuid.Uuid
 
 @Single(binds = [Table::class])
-class NotificationTable(json: Json) : UuidTable("notification") {
+class NotificationTable(json: Json) : IdTable<NotificationId>("notification") {
+	override val id = notificationId("id").clientDefault {
+		NotificationId(Uuid.generateV7().toString())
+	}.entityId()
 	val userId = userId("user_id")
 	val attributes = jsonb<NotificationAttributes>("attributes", json)
 	/**

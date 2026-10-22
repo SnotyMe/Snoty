@@ -4,6 +4,7 @@ import me.snoty.backend.utils.toUuid
 import me.snoty.core.flow.FlowId
 import me.snoty.core.node.NodeId
 import me.snoty.core.node.NodeType
+import me.snoty.core.notification.NotificationId
 import me.snoty.core.user.UserId
 import org.jetbrains.exposed.v1.core.*
 
@@ -21,6 +22,21 @@ class UserIdColumnType : ColumnType<UserId>() {
 
 fun Table.userId(name: String): Column<UserId> =
     registerColumn(name, UserIdColumnType())
+
+class NotificationIdColumnType : ColumnType<NotificationId>() {
+	private val delegate = UuidColumnType()
+
+	override fun sqlType() = delegate.sqlType()
+
+	override fun valueFromDB(value: Any): NotificationId =
+		NotificationId(delegate.valueFromDB(value).toString())
+
+	override fun notNullValueToDB(value: NotificationId): Any =
+		delegate.notNullValueToDB(value.value.toUuid())
+}
+
+fun Table.notificationId(name: String): Column<NotificationId> =
+	registerColumn(name, NotificationIdColumnType())
 
 class FlowIdColumnType : ColumnType<FlowId>() {
     private val delegate = UuidColumnType()

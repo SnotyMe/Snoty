@@ -1,5 +1,6 @@
 package me.snoty.backend.notification
 
+import me.snoty.backend.database.mongo.toNotificationId
 import me.snoty.backend.notifications.Notification
 import me.snoty.core.user.UserId
 import org.bson.Document
@@ -20,7 +21,7 @@ data class MongoNotification(
 )
 
 fun MongoNotification.toNotification() = Notification(
-	id = _id.toHexString(),
+	id = _id.toNotificationId(),
 	userId = userId,
 	attributes = attributes.entries.associate { it.key to it.value.toString() },
 	resolvedAt = resolvedAt,

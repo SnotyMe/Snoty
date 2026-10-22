@@ -5,6 +5,7 @@ import me.snoty.backend.observability.FLOW_ID
 import me.snoty.backend.observability.NODE_ID
 import me.snoty.core.flow.FlowId
 import me.snoty.core.node.NodeId
+import me.snoty.core.notification.NotificationId
 import me.snoty.core.user.UserId
 import kotlin.time.Instant
 
@@ -44,7 +45,7 @@ fun NotificationAttributes(
 
 @Serializable
 data class Notification(
-	val id: String,
+	val id: NotificationId,
 	val userId: UserId,
 	val attributes: NotificationAttributes,
 	val resolvedAt: Instant? = null,

@@ -2,12 +2,9 @@ package me.snoty.backend.notifications
 
 import me.snoty.backend.database.sql.flowTransaction
 import me.snoty.backend.database.sql.suspendTransaction
-import me.snoty.backend.utils.toUuid
+import me.snoty.core.notification.NotificationId
 import me.snoty.core.user.UserId
-import org.jetbrains.exposed.v1.core.SortOrder
-import org.jetbrains.exposed.v1.core.and
-import org.jetbrains.exposed.v1.core.eq
-import org.jetbrains.exposed.v1.core.plus
+import org.jetbrains.exposed.v1.core.*
 import org.jetbrains.exposed.v1.datetime.CurrentTimestamp
 import org.jetbrains.exposed.v1.jdbc.*
 import org.koin.core.annotation.Single
@@ -34,9 +31,15 @@ class SqlNotificationService(private val db: Database, private val table: Notifi
 		}
 	}
 
-	override suspend fun resolve(userId: UserId, attributes: NotificationAttributes): Unit = db.suspendTransaction {
+	override suspend fun resolve(userId: UserId, attributes: NotificationAttributes) =
+		resolveImpl(userId) { table.attributes eq attributes }
+
+	override suspend fun resolve(userId: UserId, id: NotificationId) =
+		resolveImpl(userId) { table.id eq id }
+
+	private suspend fun resolveImpl(userId: UserId, matcher: () -> Op<Boolean>): Unit = db.suspendTransaction {
 		table.update(where = {
-			(table.open eq true) and (table.userId eq userId) and (table.attributes eq attributes)
+			(table.open eq true) and (table.userId eq userId) and matcher()
 		}) {
 			it[table.open] = null // null, not false, to allow multiple resolved notifications (null != null)
 			it[table.resolvedAt] = CurrentTimestamp
@@ -49,7 +52,7 @@ class SqlNotificationService(private val db: Database, private val table: Notifi
 			.orderBy(table.lastSeenAt, SortOrder.DESC)
 			.map {
 				Notification(
-					id = it[table.id].toString(),
+					id = it[table.id].value,
 					userId = it[table.userId],
 					attributes = it[table.attributes],
 					resolvedAt = it[table.resolvedAt],
@@ -67,7 +70,7 @@ class SqlNotificationService(private val db: Database, private val table: Notifi
 			.count()
 	}
 
-	override suspend fun delete(userId: UserId, id: String) = db.suspendTransaction {
-		table.deleteWhere { (table.userId eq userId) and (table.id eq id.toUuid()) } > 0
+	override suspend fun delete(userId: UserId, id: NotificationId) = db.suspendTransaction {
+		table.deleteWhere { (table.userId eq userId) and (table.id eq id) } > 0
 	}
 }

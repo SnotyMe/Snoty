@@ -14,6 +14,7 @@ import me.snoty.core.flow.FlowId
 import me.snoty.core.flow.Workflow
 import me.snoty.core.node.Node
 import me.snoty.core.node.NodeId
+import me.snoty.core.notification.NotificationId
 import org.bson.Document
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
@@ -31,6 +32,7 @@ val String.objectId get() = try {
 	throw InvalidIdException(e)
 }
 
+fun ObjectId.toNotificationId() = NotificationId(this.toHexString())
 fun ObjectId.toFlowId() = FlowId(this.toHexString())
 fun ObjectId.toNodeId() = NodeId(this.toHexString())
 

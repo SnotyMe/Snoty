@@ -1,15 +1,16 @@
 package me.snoty.backend.server.resources
 
 import io.ktor.http.*
+import io.ktor.openapi.*
 import io.ktor.server.auth.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.routing.openapi.*
-import me.snoty.backend.notifications.NotificationAttributes
+import me.snoty.backend.notifications.Notification
 import me.snoty.backend.notifications.NotificationService
 import me.snoty.backend.server.routing.Resource
 import me.snoty.backend.utils.getUser
+import me.snoty.core.notification.NotificationId
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
@@ -22,6 +23,12 @@ fun notificationResource(notificationService: NotificationService) = Resource {
 				val user = call.getUser()
 
 				call.respond(notificationService.findByUser(user.id))
+			}.describe {
+				responses {
+					HttpStatusCode.OK {
+						schema = jsonSchema<List<Notification>>()
+					}
+				}
 			}
 
 			get("count") {
@@ -30,21 +37,22 @@ fun notificationResource(notificationService: NotificationService) = Resource {
 				call.respond(notificationService.unresolvedByUser(user.id))
 			}
 
-			put("resolve") {
+			put("{id}/resolve") {
 				val user = call.getUser()
-				val attributes: NotificationAttributes = call.receive()
+				val notificationId = call.parameters["id"]?.let(::NotificationId)
+					?: return@put call.respond(HttpStatusCode.BadRequest, "Notification ID is required")
 
-				notificationService.resolve(user.id, attributes)
+				notificationService.resolve(user.id, notificationId)
 
 				call.respond(HttpStatusCode.NoContent)
 			}
 
 			delete("{id}") {
 				val user = call.getUser()
-				val notification = call.parameters["id"]
+				val notificationId = call.parameters["id"]?.let(::NotificationId)
 					?: return@delete call.respond(HttpStatusCode.BadRequest, "Notification ID is required")
 
-				val result = notificationService.delete(user.id, notification)
+				val result = notificationService.delete(user.id, notificationId)
 
 				if (result) {
 					call.respond(HttpStatusCode.NoContent)
