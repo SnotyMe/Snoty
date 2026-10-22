@@ -2,10 +2,11 @@ package me.snoty.backend.server.plugins
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.http.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.plugins.forwardedheaders.*
-import io.ktor.server.sse.SSE
+import io.ktor.server.sse.*
 import me.snoty.backend.config.Config
 
 fun Application.configureHTTP(config: Config) {
@@ -28,6 +29,9 @@ fun Application.configureHTTP(config: Config) {
 
 		// credentials
 		allowCredentials = true
+	}
+	install(HttpRequestLifecycle) {
+		cancelCallOnClose = true
 	}
 	install(SSE)
 }
