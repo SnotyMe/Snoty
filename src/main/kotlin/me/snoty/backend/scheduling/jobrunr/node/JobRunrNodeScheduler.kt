@@ -54,5 +54,5 @@ class JobRunrNodeScheduler(
 
 	private fun jobId(node: NodeWithSettings) = "${node.flowId.value}_${node.id.value}"
 	private fun jobName(node: NodeWithSettings) =
-		"Node type=${node.type.value} id=${node.id.value} user=${node.userId.value} name=${node.name}"
+		"Node type=${node.type.value} id=${node.id.value} user=${node.userId.value} flowId=${node.flowId.value} name=${node.name}"
 }
