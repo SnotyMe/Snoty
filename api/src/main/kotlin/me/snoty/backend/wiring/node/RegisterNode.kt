@@ -22,3 +22,9 @@ annotation class Icon(
 	val name: String = "",
 	val color: String = "",
 )
+
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class SkipRegisterIfMissing(
+	val value: Array<KClass<*>>
+)

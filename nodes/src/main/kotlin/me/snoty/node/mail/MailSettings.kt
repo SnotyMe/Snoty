@@ -1,10 +1,10 @@
-package me.snoty.node.mail.global
+package me.snoty.node.mail
 
 import kotlinx.serialization.Serializable
+import me.snoty.backend.mail.TEXT_HTML_UTF8
 import me.snoty.backend.schema.FieldDefaultValue
 import me.snoty.backend.schema.FieldHidden
 import me.snoty.backend.wiring.node.NodeSettings
-import me.snoty.node.mail.smtp.TEXT_HTML_UTF8
 
 @Serializable
 data class MailSettings(
