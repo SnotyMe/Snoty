@@ -2,6 +2,7 @@ package me.snoty.backend.wiring.node
 
 import com.sksamuel.hoplite.ConfigFailure
 import io.github.oshai.kotlinlogging.KotlinLogging
+import me.snoty.backend.adapter.AdapterConfig
 import me.snoty.backend.config.ConfigException
 import me.snoty.backend.config.ConfigWrapper
 import me.snoty.backend.injection.getFromAllScopes
@@ -13,9 +14,11 @@ import me.snoty.extension.ExtensionContributor
 import org.koin.core.Koin
 import org.koin.core.annotation.Single
 import org.koin.core.error.InstanceCreationException
+import org.koin.core.error.NoDefinitionFoundException
 import org.koin.core.parameter.parametersOf
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
@@ -42,7 +45,7 @@ class NodeHandlerContributorLookup(private val koin: Koin) {
 			registerNodeHandler(contributor, metadata, scope)
 				.onFailure { ex ->
 					val exception = prettify(ex)
-					val isFatal = reportStartupFailure(metadata, exception)
+					val isFatal = reportStartupFailure(contributor, metadata, exception)
 
 					if (isFatal) throw exception
 				}
@@ -104,34 +107,65 @@ class NodeHandlerContributorLookup(private val koin: Koin) {
 		else -> e
 	}
 
-	private fun reportStartupFailure(metadata: NodeMetadata, exception: Throwable?): Boolean {
+	private fun reportStartupFailure(contributor: NodeHandlerContributor, metadata: NodeMetadata, exception: Throwable?): Boolean {
 		val nodeName = metadata.type
-		if (exception is ConfigException) {
-			var fatal: Boolean? = false
-			when (val fail = exception.fail) {
-				// the user hasn't configured it -> probably unwanted
-				is ConfigFailure.MissingConfigValue -> logger.info {
-					"Didn't enable $nodeName because the required config of type ${fail.type.simpleClassName} is missing"
-				}
-
-				// the user hasn't configured a wrapper -> probably unwanted
-				// wrappers only contain the actual wanted field and are simply used to allow sealed classes to work
-				is ConfigFailure.DataClassFieldErrors if fail.type.jvmErasure.hasAnnotation<ConfigWrapper>() -> logger.info {
-					val wrapperName = fail.type.simpleClassName
-					val fields = fail.errors.list.joinToString(", ") {
-						(it as? ConfigFailure.MissingConfigValue)?.type?.simpleClassName ?: wrapperName
-					}
-					"Didn't enable $nodeName because the required config(s) of type(s) $fields is missing"
-				}
-
-				// couldn't handle the issue, fallthrough
-				else -> fatal = null
-			}
-
-			if (fatal != null) return fatal
+		val fatal = when (exception) {
+			is ConfigException -> reportConfigExceptionStartupFailure(nodeName.value, exception)
+			is NoDefinitionFoundException -> reportNoDefinitionFoundStartupFailure(nodeName.value, contributor, exception)
+			else -> null
 		}
 
+		if (fatal != null) return fatal
+
 		logger.error(exception) { "Failed to enable $nodeName" }
+		return true
+	}
+
+	private fun reportConfigExceptionStartupFailure(nodeName: String, exception: ConfigException): Boolean? = when (val fail = exception.fail) {
+		// the user hasn't configured it -> probably unwanted
+		is ConfigFailure.MissingConfigValue -> {
+			when {
+				fail.type.simpleClassName == AdapterConfig::class.simpleName -> logger.info {
+					"Didn't enable $nodeName because a required adapter is not configured $exception"
+				}
+				else -> logger.info {
+					"Didn't enable $nodeName because the required config of type ${fail.type.simpleClassName} is missing"
+				}
+			}
+			false
+		}
+
+		// the user hasn't configured a wrapper -> probably unwanted
+		// wrappers only contain the actual wanted field and are simply used to allow sealed classes to work
+		is ConfigFailure.DataClassFieldErrors if fail.type.jvmErasure.hasAnnotation<ConfigWrapper>() -> {
+			logger.info {
+				val wrapperName = fail.type.simpleClassName
+				val fields = fail.errors.list.joinToString(", ") {
+					(it as? ConfigFailure.MissingConfigValue)?.type?.simpleClassName ?: wrapperName
+				}
+				"Didn't enable $nodeName because the required config(s) of type(s) $fields is missing"
+			}
+			false
+		}
+
+		// couldn't handle the issue, fallthrough
+		else -> null
+	}
+
+	private fun reportNoDefinitionFoundStartupFailure(nodeName: String, contributor: NodeHandlerContributor, exception: NoDefinitionFoundException): Boolean {
+		val skipAnnotation = contributor.nodeHandlerClass.findAnnotation<SkipRegisterIfMissing>()
+
+		val missing = exception.message?.substringAfter("'")?.substringBefore("'")
+
+		val missingIsSkipped = skipAnnotation?.value?.any { it.qualifiedName == missing } ?: false
+		if (missingIsSkipped) {
+			logger.info {
+				"Didn't enable $nodeName because the dependency $missing is missing"
+			}
+			return false
+		}
+
+		logger.error(exception) { "Failed to enable $nodeName because dependency '$missing' is missing" }
 		return true
 	}
 }

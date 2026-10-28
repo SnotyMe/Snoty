@@ -69,6 +69,7 @@ dependencies { with(libs) {
 
     // other adapters
     implementation(projects.adapter.redis)
+    implementation(projects.adapter.mail)
 
     devImplementation(libs.koin.annotations)
     implementation(koin.slf4j)
