@@ -1,9 +1,10 @@
 package me.snoty.node.mail.smtp
 
-import jakarta.mail.Session
+import me.snoty.backend.mail.MailSendRequest
+import me.snoty.backend.mail.impl.smtp.SmtpMailService
 import me.snoty.backend.wiring.data.NodeInput
 import me.snoty.backend.wiring.data.NodeOutput
-import me.snoty.backend.wiring.data.each
+import me.snoty.backend.wiring.data.get
 import me.snoty.backend.wiring.node.Icon
 import me.snoty.backend.wiring.node.NodeHandleContext
 import me.snoty.backend.wiring.node.NodeHandler
@@ -26,20 +27,13 @@ class SmtpNodeHandler : NodeHandler {
 	context(_: NodeHandleContext)
 	override suspend fun process(node: NodeWithSettings, input: NodeInput): NodeOutput {
 		val settings = node.settings as SmtpSettings
-		val properties = settings.toConfiguration()
-		val session = Session.getInstance(properties)
-		return session.getTransport("smtp").use { transport ->
-			transport.connect(settings.host, settings.username, settings.password)
+		val smtpConfig = settings.toConfiguration()
+		val service = SmtpMailService(smtpConfig)
 
-			each<MailInput>(input) { mail ->
-				val send = SmtpSend(
-					from = settings.from,
-					to = settings.to,
-					mimeType = settings.mimeType,
-				)
-				val message = createMessage(mail, session, send)
-				transport.sendMessage(message, message.allRecipients)
-			}
-		}
+		val mails = input.map { it.get<MailSendRequest>() }
+
+		service.send(mails = mails, to = settings.to, mimeType = settings.mimeType)
+
+		return emptyList()
 	}
 }

@@ -10,3 +10,9 @@ authentication:
   adapter: keycloak
 redis:
   url: "redis://localhost:6379"
+mail:
+  adapter: smtp
+  smtp:
+    host: localhost
+    port: 1025
+    from: noreply@dev.snoty.me

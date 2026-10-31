@@ -25,6 +25,7 @@ val TestConfig = Config(
 	environment = Environment.TEST,
 	applicationMode = ApplicationMode.BACKEND,
 	publicHost = "http://localhost:8080",
+	frontendUrl = "http://localhost:3000",
 )
 
 class TestConfigBuilder(block: TestConfigBuilder.() -> Unit) {

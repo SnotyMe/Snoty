@@ -38,6 +38,7 @@ dependencies { with(libs) {
 
     api(libraries.openfeature)
     api(libraries.caffeine)
+    api(libraries.jakarta.mail)
 
     // DO NOT use in anything but bson-related code
     implementation(database.mongodb)

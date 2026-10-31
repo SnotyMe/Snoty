@@ -13,6 +13,7 @@ import me.snoty.backend.featureflags.LogFeatureFlagsContainer
 import me.snoty.backend.featureflags.setupFeatureFlags
 import me.snoty.backend.injection.getFromAllScopes
 import me.snoty.backend.logging.setupLogbackFilters
+import me.snoty.backend.mail.MailAdapter
 import me.snoty.backend.wiring.flow.execution.ExecutionEventAdapter
 import org.koin.core.Koin
 import org.koin.core.logger.Level
@@ -44,6 +45,7 @@ fun startApplication(vararg extraModules: Module) = runBlocking {
 	val initialFeatureFlags = koin.getFromAllScopes<LogFeatureFlagsContainer>()
 	setupFeatureFlags(koin.get(), initialFeatureFlags)
 
+	adapterSelector.loadOptional(MailAdapter::class, MailAdapter.CONFIG_GROUP)
 	adapterSelector.load(DatabaseAdapter::class, DatabaseAdapter.CONFIG_GROUP)
 	adapterSelector.load(AuthenticationAdapter::class, AuthenticationAdapter.CONFIG_GROUP)
 	adapterSelector.load(ExecutionEventAdapter::class, ExecutionEventAdapter.CONFIG_GROUP)

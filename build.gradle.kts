@@ -69,10 +69,12 @@ dependencies { with(libs) {
 
     // other adapters
     implementation(projects.adapter.redis)
+    implementation(projects.adapter.mail)
 
     devImplementation(libs.koin.annotations)
     implementation(koin.slf4j)
     implementation(libraries.coroutines.core)
+    implementation(libraries.liqp)
 
     // configuration
     implementation(configuration.hoplite.yaml)
