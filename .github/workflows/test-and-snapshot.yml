@@ -15,7 +15,7 @@ jobs:
   build:
     name: Build and run Tests
     needs: get-version
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - uses: actions/checkout@v7
@@ -34,7 +34,7 @@ jobs:
           build-scan-terms-of-use-agree: yes
 
       - name: Run tests
-        run: ./gradlew -Pfrontend.enabled=false check koverXmlReport
+        run: ./gradlew -Pfrontend.enabled=false check koverXmlReport --stacktrace
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v6
@@ -59,6 +59,8 @@ jobs:
       - name: Build docker image
         run: |
           ./gradlew \
+            --stacktrace \
+            -x check \
             -Pfrontend.enabled=false \
             -Pme.snoty.docker.image="ghcr.io/snotyme/snoty-backend-snapshot" \
             -Pme.snoty.docker.tags="${{ needs.get-version.outputs.version }}" \
