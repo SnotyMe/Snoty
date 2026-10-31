@@ -1,4 +1,4 @@
-import {locales} from "./layers/base/shared/i18n.ts"
+import { locales } from "./layers/base/shared/i18n.ts"
 
 const isStaticFileHosting = process.env.FRONTEND_STATIC_FILE_HOSTING === "true"
 const apiBaseUrl = process.env.API_BASE_URL ?? (() => {
@@ -23,6 +23,7 @@ export default defineNuxtConfig({
 		"@vueuse/nuxt",
 		"nuxt-codemirror",
 		"@pinia/nuxt",
+		"nuxt-email-renderer",
 	],
 
 	ssr: !isStaticFileHosting,

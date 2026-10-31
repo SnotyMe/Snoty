@@ -1,5 +1,12 @@
 import { useApi } from "~/api/backend/api-clients"
-import { AuthApi, type AuthenticationMetadata, type OAuth2TokenResponse, type Role } from "~/api/backend/generated"
+import {
+	AuthApi,
+	type AuthenticationMetadata,
+	type KeycloakAuthenticationMetadata,
+	type OAuth2TokenResponse,
+	ResponseError,
+	type Role,
+} from "~/api/backend/generated"
 import { jwtDecode } from "jwt-decode"
 import type { User } from "#layers/base/app/types/user.ts"
 import type { AuthComposable } from "#layers/base/app/types/auth.ts"
@@ -29,8 +36,38 @@ export const useAuth = defineStore("auth", () => {
 	const exchangeCode = async (code: string, redirectUrl: string) =>
 		authApi.authTokenPost({ code, redirectUrl })
 
-	const login = async (data: OAuth2TokenResponse, backlink: string | undefined) => {
+	const loginBasic = async (username: string, password: string) => {
+		const authMetadataValue = authMetadata.value as KeycloakAuthenticationMetadata | undefined
+		if (!authMetadataValue?.publicClientId) return
+
+		const params = new URLSearchParams({
+			client_id: authMetadataValue.publicClientId,
+			username,
+			password,
+			scope: "openid",
+			grant_type: "password",
+		})
+		const response = await fetch(
+			authMetadataValue.tokenUrl,
+			{
+				method: "POST",
+				body: params,
+			},
+		)
+
+		if (!response.ok) {
+			throw new ResponseError(response)
+		}
+
+		const json = await response.json()
+		login(json)
+	}
+
+	const login = (data: OAuth2TokenResponse) => {
 		setCookies(data)
+	}
+
+	const safeNavigateTo = (backlink: string | undefined) => {
 		try {
 			return navigateTo(backlink ?? "/")
 		} catch {
@@ -74,9 +111,11 @@ export const useAuth = defineStore("auth", () => {
 
 		return {
 			id: jwtValue.sub,
+			email: jwtValue.email,
 			name: jwtValue.name,
 			firstName: jwtValue.given_name,
 			lastName: jwtValue.family_name,
+			displayName: jwtValue.displayName,
 		} as User
 	})
 
@@ -89,11 +128,13 @@ export const useAuth = defineStore("auth", () => {
 	return {
 		authMetadata,
 		exchangeCode,
+		loginBasic,
 		login,
 		refresh,
 		logout,
 		user,
 		hasRole,
+		safeNavigateTo,
 		accessToken: accessTokenCookie,
 		refreshToken: refreshTokenCookie,
 	}

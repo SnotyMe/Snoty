@@ -34,7 +34,8 @@ open class BadRequestException(message: String) : HttpStatusException(HttpStatus
 open class UnauthorizedException(message: String) : HttpStatusException(HttpStatusCode.Unauthorized, message)
 open class ForbiddenException(message: String) : HttpStatusException(HttpStatusCode.Forbidden, message)
 open class NotFoundException(message: String? = null) : HttpStatusException(HttpStatusCode.NotFound, message ?: HttpStatusCode.NotFound.description)
+open class ConflictException(message: String) : HttpStatusException(HttpStatusCode.Conflict, message)
 
 // 5xx
 open class InternalServerErrorException(message: String) : HttpStatusException(HttpStatusCode.InternalServerError, message)
-open class NotImplemented(message: String) : HttpStatusException(HttpStatusCode.NotImplemented, message)
+open class NotImplementedException(message: String) : HttpStatusException(HttpStatusCode.NotImplemented, message)

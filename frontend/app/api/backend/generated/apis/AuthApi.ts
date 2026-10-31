@@ -17,17 +17,24 @@
 import * as runtime from '../runtime';
 import type {
   AuthenticationMetadata,
+  KeycloakRegisterRequest,
   OAuth2TokenResponse,
   Role,
 } from '../models/index';
 import {
     AuthenticationMetadataFromJSON,
     AuthenticationMetadataToJSON,
+    KeycloakRegisterRequestFromJSON,
+    KeycloakRegisterRequestToJSON,
     OAuth2TokenResponseFromJSON,
     OAuth2TokenResponseToJSON,
     RoleFromJSON,
     RoleToJSON,
 } from '../models/index';
+
+export interface AuthKeycloakRegisterPostRequest {
+    keycloakRegisterRequest?: KeycloakRegisterRequest;
+}
 
 export interface AuthLogoutPostRequest {
     idToken: string;
@@ -81,6 +88,45 @@ export class AuthApi extends runtime.BaseAPI {
      */
     async authCallbackGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.authCallbackGetRaw(initOverrides);
+    }
+
+    /**
+     * Creates request options for authKeycloakRegisterPost without sending the request
+     */
+    async authKeycloakRegisterPostRequestOpts(requestParameters: AuthKeycloakRegisterPostRequest): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/auth/keycloak/register`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: KeycloakRegisterRequestToJSON(requestParameters['keycloakRegisterRequest']),
+        };
+    }
+
+    /**
+     * 
+     */
+    async authKeycloakRegisterPostRaw(requestParameters: AuthKeycloakRegisterPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.authKeycloakRegisterPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * 
+     */
+    async authKeycloakRegisterPost(requestParameters: AuthKeycloakRegisterPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.authKeycloakRegisterPostRaw(requestParameters, initOverrides);
     }
 
     /**

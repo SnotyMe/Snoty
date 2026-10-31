@@ -9,6 +9,9 @@ const props = defineProps<{
 }>()
 
 const { user } = props.useAuth()
+const userDisplayName = computed(() =>
+	user?.displayName ?? user?.name ?? `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim(),
+)
 </script>
 
 <template>
@@ -18,10 +21,8 @@ const { user } = props.useAuth()
 		:ui="{ content: collapsed ? 'w-48' : 'w-(--reka-dropdown-menu-trigger-width)' }"
 	>
 		<UButton
-			:avatar="{
-				text: (user?.firstName?.[0] ?? '') + (user?.lastName?.[0] ?? ''),
-			}"
-			:label="collapsed ? undefined : user?.name"
+			:avatar="{ alt: userDisplayName }"
+			:label="collapsed ? undefined : userDisplayName"
 			:trailing-icon="collapsed ? undefined : 'i-lucide-chevrons-up-down'"
 			color="neutral"
 			variant="ghost"

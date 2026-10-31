@@ -6,12 +6,8 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.routing.routing
-import me.snoty.backend.authentication.keycloak.KeycloakAuthenticationProvider
-import me.snoty.backend.authentication.keycloak.KeycloakConfig
-import me.snoty.backend.authentication.keycloak.keycloakAuthenticationResource
-import me.snoty.backend.authentication.keycloak.provideKeycloakServerSettings
-import me.snoty.backend.authentication.keycloak.toOidcConfig
+import io.ktor.server.routing.*
+import me.snoty.backend.authentication.keycloak.*
 import me.snoty.backend.dev.authentication.KeycloakConfigurer
 import me.snoty.backend.dev.authentication.REALM_NAME
 import me.snoty.backend.server.routing.register
@@ -62,7 +58,7 @@ class AuthenticationTest {
 	private val configure: Application.() -> Unit = {
 		keycloakAuthenticationProvider.configureKtor(this)
 		routing {
-			keycloakAuthenticationResource(oidcConfig, HttpClient {}, provideKeycloakServerSettings(oidcConfig))
+			keycloakOidcAuthenticationResource(oidcConfig, HttpClient {}, provideKeycloakServerSettings(oidcConfig))
 				.register(this)
 		}
 	}

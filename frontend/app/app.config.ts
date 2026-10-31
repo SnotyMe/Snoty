@@ -25,5 +25,10 @@ export default defineAppConfig({
 				base: "cursor-pointer",
 			},
 		},
+		authForm: {
+			slots: {
+				body: "gap-y-3",
+			},
+		},
 	},
 })

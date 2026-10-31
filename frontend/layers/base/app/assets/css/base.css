@@ -10,6 +10,10 @@
 	--color-surface-800: oklch(32% 0 0);
 	--color-surface-900: oklch(25% 0 0);
 	--color-surface-950: oklch(18% 0 0);
+
+	--color-brand-500: oklch(0.702 0.183 293.541);
+
+	--font-sans: 'Public Sans', sans-serif;
 }
 
 :root {
@@ -21,9 +25,18 @@
 }
 
 :root.dark {
-	--ui-bg: var(--ui-color-neutral-950);
-	--ui-bg-muted: var(--ui-color-neutral-900);
-	--ui-bg-elevated: var(--ui-color-neutral-800);
-	--ui-bg-accented: var(--ui-color-neutral-700);
+	--ui-bg: var(--color-surface-950);
+	--ui-bg-muted: var(--color-surface-900);
+	--ui-bg-elevated: var(--color-surface-800);
+	--ui-bg-accented: var(--color-surface-700);
 	--ui-bg-inverted: white;
+
+	--ui-border: var(--color-surface-800);
+
+	--ui-text-dimmed: var(--color-surface-500);
+	--ui-text-muted: var(--color-surface-400);
+	--ui-text-toned: var(--color-surface-300);
+	--ui-text: var(--color-surface-200);
+	--ui-text-highlighted: #fff;
+	--ui-text-inverted: var(--color-surface-900);
 }

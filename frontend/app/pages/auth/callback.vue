@@ -23,10 +23,11 @@ const route = useRoute()
 const code = route.query.code as string
 const backlink = route.query.to as string | undefined
 
-const { exchangeCode, login } = useAuth()
+const { exchangeCode, login, safeNavigateTo } = useAuth()
 const { error } = useAsyncData("login", async () => {
 	const oauthTokenResponse = await exchangeCode(code, getKeycloakRedirectUrl(backlink))
-	await login(oauthTokenResponse, backlink)
+	login(oauthTokenResponse)
+	await safeNavigateTo(backlink)
 }, { server: false })
 </script>
 

@@ -2,7 +2,6 @@ package me.snoty.backend.mail
 
 import liqp.TemplateParser
 import org.koin.core.annotation.Single
-import java.io.InputStream
 
 @Single
 class MailTemplateServiceImpl(
@@ -13,7 +12,7 @@ class MailTemplateServiceImpl(
 	override fun sendMail(
 		to: String,
 		subject: String,
-		bodyTemplate: InputStream,
+		bodyTemplate: String,
 		variables: Map<String, Any>
 	) {
 		val body = templateParser.parse(bodyTemplate)
