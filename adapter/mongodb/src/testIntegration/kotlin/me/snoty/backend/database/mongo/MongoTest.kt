@@ -11,7 +11,7 @@ import org.testcontainers.mongodb.MongoDBContainer
 
 object MongoTest {
 	@Container
-	val mongoContainer = MongoDBContainer("mongo:8.0")
+	val mongoContainer = MongoDBContainer("mongo:8.2")
 	private val mongoStartup = MongoStartup(emptyList())
 	val config: MongoConfig
 
