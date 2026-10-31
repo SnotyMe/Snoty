@@ -16,12 +16,7 @@ object MongoTest {
 	val config: MongoConfig
 
 	init {
-		try {
-			mongoContainer.start()
-		} catch (exception: Exception) {
-			System.err.println("Mongo container logs:\n${mongoContainer.logs}")
-			throw exception
-		}
+		mongoContainer.start()
 		config = MongoConfig(
 			connection = MongoConnectionConfig.ConnectionString(mongoContainer.connectionString),
 		)
