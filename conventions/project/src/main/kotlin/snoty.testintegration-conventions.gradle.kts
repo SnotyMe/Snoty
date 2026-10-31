@@ -35,6 +35,14 @@ testing {
 			dependencies {
 				implementation(testFixtures(project(":api")))
 			}
+
+			tasks.withType<Test>().configureEach {
+				testLogging {
+					events("failed", "standardOut", "standardError")
+					exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+					showStandardStreams = true
+				}
+			}
 		}
 	}
 }
