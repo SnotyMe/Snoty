@@ -23,6 +23,23 @@
                 ]
             }
         },
+        "/auth/keycloak/register": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/KeycloakRegisterRequest"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "get": {
                 "tags": [
@@ -1650,6 +1667,12 @@
                     "clientId": {
                         "type": "string"
                     },
+                    "onboardingUrl": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "publicClientId": {
                         "type": [
                             "string",
@@ -1887,6 +1910,22 @@
                 ],
                 "properties": {
                     "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "KeycloakRegisterRequest": {
+                "type": "object",
+                "title": "KeycloakRegisterRequest",
+                "required": [
+                    "email",
+                    "displayName"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "displayName": {
                         "type": "string"
                     }
                 }

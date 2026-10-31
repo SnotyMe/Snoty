@@ -33,6 +33,7 @@ export * from './JobScheduleRecurring';
 export * from './JobTriggerResult';
 export * from './KeycloakAuthenticationMetadata';
 export * from './KeycloakIdentityProvider';
+export * from './KeycloakRegisterRequest';
 export * from './NodeCreateRequest';
 export * from './NodeDescription';
 export * from './NodeLogEntryDto';

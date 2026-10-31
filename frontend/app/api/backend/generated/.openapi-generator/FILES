@@ -44,6 +44,7 @@ models/JobScheduleRecurring.ts
 models/JobTriggerResult.ts
 models/KeycloakAuthenticationMetadata.ts
 models/KeycloakIdentityProvider.ts
+models/KeycloakRegisterRequest.ts
 models/NodeCreateRequest.ts
 models/NodeDescription.ts
 models/NodeLogEntryDto.ts

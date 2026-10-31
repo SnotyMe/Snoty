@@ -88,6 +88,7 @@ export default withNuxt(
 	{
 		ignores: [
 			"app/components/vue-bits/**", // full of non-conformant code using different formatting opinions
+			"app/emails",
 		],
 	},
 )

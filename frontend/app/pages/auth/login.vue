@@ -3,22 +3,32 @@ en:
   description: Enter your details to log in to Snoty.
   login: Login
   separator: or
-  username:
-    label: Username
-    placeholder: Enter your username
+  email:
+    label: E-Mail
+    placeholder: Your E-Mail Address
   password:
     label: Password
     placeholder: Enter your password
+  noAccount: New to Snoty?
+  register: Sign up
+  error:
+    generic: Error signing in.
+    invalidCredentials: Invalid credentials.
 de:
   description: Gib deine Daten ein, um dich in Snoty einzuloggen.
   login: Anmelden
   separator: oder
-  username:
-    label: Nutzername
-    placeholder: Geben Sie Ihren Nutzernamen ein
+  email:
+    label: E-Mail
+    placeholder: Deine E-Mail-Adresse
   password:
     label: Passwort
     placeholder: Geben Sie Ihr Passwort ein
+  noAccount: Neu bei Snoty?
+  register: Registrieren
+  error:
+    generic: Fehler beim Login.
+    invalidCredentials: Ungültige Zugangsdaten.
 </i18n>
 
 <script setup lang="ts">
@@ -26,8 +36,9 @@ import * as z from "zod"
 import type { AuthFormField, FormSubmitEvent } from "@nuxt/ui"
 import { definePageMeta } from "#imports"
 import { useAuth } from "~/stores/auth"
-import { getKeycloakProviders } from "~/utils/keycloak"
-import type { KeycloakAuthenticationMetadata } from "~/api/backend/generated"
+import { useAuthProviders } from "~/composables/auth/useAuthProviders.ts"
+import { type KeycloakAuthenticationMetadata, ResponseError } from "~/api/backend/generated"
+import { buildUrl } from "~/utils/url.ts"
 
 definePageMeta({
 	layout: "center",
@@ -37,10 +48,10 @@ const { t } = useI18n({ useScope: "local" })
 
 const fields: AuthFormField[] = [
 	{
-		name: "username",
-		type: "username",
-		label: t("username.label"),
-		placeholder: t("username.placeholder"),
+		name: "email",
+		type: "email",
+		label: t("email.label"),
+		placeholder: t("email.placeholder"),
 		required: true,
 	},
 	{
@@ -58,50 +69,56 @@ const { authMetadata } = storeToRefs(authStore)
 const route = useRoute()
 const backlink = route.query.to as string | undefined
 
-const providers = computed(() => {
-	const metadata = authMetadata.value
-	if (!metadata) return
+const providers = useAuthProviders(backlink)
 
-	switch (metadata?.adapter) {
-		case "keycloak":
-			return getKeycloakProviders(metadata as KeycloakAuthenticationMetadata, backlink)
-		default:
-			return []
-	}
-})
+const [
+	DefineNoAccount,
+	ReuseNoAccount,
+] = createReusableTemplate()
 
 const schema = z.object({
-	username: z.string("Name is required"),
-	password: z.string("Password is required").min(8, "Must be at least 8 characters"),
+	email: z.string("E-Mail is required"),
+	password: z.string("Password is required"),
 })
 
 type Schema = z.output<typeof schema>
 
-async function onSubmit(payload: FormSubmitEvent<Schema>) {
-	const authMetadataValue = authMetadata.value
-	if (!authMetadataValue?.publicClientId) return
+const authForm = useTemplateRef("authForm")
 
-	const params = new URLSearchParams({
-		client_id: authMetadataValue.publicClientId,
-		username: payload.data.username,
-		password: payload.data.password,
-		scope: "openid",
-		grant_type: "password",
-	})
-	const response = await fetch(
-		authMetadataValue.tokenUrl,
-		{
-			method: "POST",
-			body: params,
-		},
-	).then(res => res.json())
-	await authStore.login(response, backlink)
+const error = ref<string>()
+
+async function onSubmit(payload: FormSubmitEvent<Schema>) {
+	error.value = undefined
+	try {
+		await authStore.loginBasic(payload.data.email, payload.data.password)
+	} catch (e) {
+		if (e instanceof ResponseError && e.response.status == 400) {
+			error.value = "invalidCredentials"
+		} else {
+			error.value = "generic"
+		}
+	}
+	await authStore.safeNavigateTo(backlink)
 }
 </script>
 
 <template>
-	<UPageCard class="w-md max-w-9/10">
+	<DefineNoAccount>
+		{{ t("noAccount") }}
+		<NuxtLink
+			:to="buildUrl('/auth/register', {
+				to: backlink,
+				email: authForm?.state?.email,
+			})"
+			class="ml-1 font-medium text-primary"
+		>
+			{{ t("register") }}
+		</NuxtLink>
+	</DefineNoAccount>
+
+	<AuthContainer>
 		<UAuthForm
+			ref="authForm"
 			:schema="schema"
 			title="Login"
 			:description="t('description')"
@@ -110,5 +127,20 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 			:providers="providers"
 			@submit="onSubmit"
 		/>
-	</UPageCard>
+		<UAlert
+			v-if="error"
+			:title="t(`error.${error}`)"
+			color="error"
+			variant="subtle"
+			size="sm"
+			class="mt-2"
+		>
+			<template #title>
+				{{ t(`error.${error}`) }} <ReuseNoAccount/>
+			</template>
+		</UAlert>
+		<div v-if="(authMetadata as KeycloakAuthenticationMetadata | undefined)?.onboardingUrl" class="absolute mt-4 text-center text-sm bottom-0 right-0">
+			<ReuseNoAccount/>
+		</div>
+	</AuthContainer>
 </template>

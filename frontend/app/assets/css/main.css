@@ -5,8 +5,6 @@
 @import "@vue-flow/core/dist/style.css";
 
 @theme static {
-  --font-sans: 'Public Sans', sans-serif;
-
 	--flow-control-padding: 0.5em;
 	--flow-control-button-size: 1.25em;
 	--flow-resize-thickness: 10px;
