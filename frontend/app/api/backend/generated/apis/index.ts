@@ -10,5 +10,6 @@ export * from './NodeDiffinjectorApi';
 export * from './NodeIcalApi';
 export * from './NodeMetadataApi';
 export * from './NodeUnchangedfilterApi';
+export * from './NodeWebhookTriggerApi';
 export * from './NotificationApi';
 export * from './TaskApi';

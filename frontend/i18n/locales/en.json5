@@ -27,6 +27,11 @@
     "locale": "Locale",
     "logOut": "Log out",
   },
+  "settings": {
+    "language": "Language",
+    "dateFormat": "Date Format",
+    "colorScheme": "Color Scheme",
+  },
   "validation": {
     "required": "This field is required",
   },

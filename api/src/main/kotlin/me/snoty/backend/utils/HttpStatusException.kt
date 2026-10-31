@@ -37,4 +37,4 @@ open class NotFoundException(message: String? = null) : HttpStatusException(Http
 
 // 5xx
 open class InternalServerErrorException(message: String) : HttpStatusException(HttpStatusCode.InternalServerError, message)
-open class NotImplemented(message: String) : HttpStatusException(HttpStatusCode.NotImplemented, message)
+open class NotImplementedException(message: String) : HttpStatusException(HttpStatusCode.NotImplemented, message)

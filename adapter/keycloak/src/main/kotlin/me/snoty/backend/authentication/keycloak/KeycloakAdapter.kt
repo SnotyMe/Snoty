@@ -44,6 +44,9 @@ class KeycloakAdapter : AuthenticationAdapter {
             authUrl = oidcConfig.authUrl,
             tokenUrl = oidcConfig.tokenUrl,
             logoutUrl = oidcConfig.logoutUrl,
+            onboardingUrl = if (keycloakConfig.selfRegistration?.enabled == true) {
+				"${keycloakConfig.baseUrl}/realms/${keycloakConfig.realm}/onboarding/onboard"
+			} else null,
             clientId = oidcConfig.clientId,
             publicClientId = oidcConfig.publicClientId,
             providers = providers,
@@ -63,13 +66,18 @@ data class KeycloakConfig(
      */
     val internalBaseUrl: String = baseUrl,
     val realm: String,
-    val issuerUrl: String = "$baseUrl/realms/$realm", // override when using internal networking
+    val issuerUrl: String = "$baseUrl/realms/$realm",
     val clientId: String,
     val publicClientId: String? = null,
+    val selfRegistration: KeycloakSelfRegistrationConfig? = null,
     val clientSecret: String,
     val roleMappings: RoleMapping = mapOf(
         "snoty-admin" to Role.ADMIN.name,
     ),
+)
+
+data class KeycloakSelfRegistrationConfig(
+    val enabled: Boolean = false,
 )
 
 fun KeycloakConfig.toOidcConfig(keycloakBaseUrl: String) = OidcConfig(

@@ -7,6 +7,8 @@ import org.keycloak.admin.client.resource.RealmsResource
 import org.keycloak.representations.idm.ClientRepresentation
 import org.keycloak.representations.idm.ProtocolMapperRepresentation
 import org.keycloak.representations.idm.RealmRepresentation
+import org.keycloak.representations.userprofile.config.UPAttribute
+import org.keycloak.representations.userprofile.config.UPAttributePermissions
 import kotlin.time.Duration.Companion.days
 
 class KeycloakConfigurer(private var realmsResource: RealmsResource, private var realmName: String) {
@@ -49,6 +51,62 @@ class KeycloakConfigurer(private var realmsResource: RealmsResource, private var
 		}
 		val realmResource = realmsResource.realm(realmName)
 		realmResource.update(realmRepresentation)
+
+		val userProfileResource = realmResource.users().userProfile()
+		val userProfileConfig = userProfileResource.configuration
+
+		val attributes = userProfileConfig.attributes
+			.orEmpty()
+			.filterNot { it.name == "firstName" || it.name == "lastName" }
+			.associateBy { it.name }
+			.toMutableMap()
+
+		attributes.putIfAbsent("displayName", UPAttribute().apply {
+			name = "displayName"
+			displayName = "Display Name"
+			validations = mapOf(
+				"length" to mapOf(
+					"min" to 2,
+					"max" to 100
+				)
+			)
+			permissions = UPAttributePermissions(setOf("user", "admin"), setOf("user", "admin"))
+		})
+		attributes.putIfAbsent("onboarded", UPAttribute().apply {
+			name = "onboarded"
+			displayName = "Onboarded"
+			permissions = UPAttributePermissions(setOf("admin"), setOf("admin"))
+		})
+		userProfileConfig.attributes = attributes.values.toList()
+
+		userProfileResource.update(userProfileConfig)
+
+		fun ProtocolMapperRepresentation.configureDisplayName() = apply {
+			name = "displayName"
+			protocol = "openid-connect"
+			protocolMapper = "oidc-usermodel-attribute-mapper"
+			config = mapOf(
+				"claim.name" to "displayName",
+				"user.attribute" to "displayName",
+				"id.token.claim" to "true",
+				"access.token.claim" to "true",
+				"userinfo.token.claim" to "true",
+			)
+		}
+
+		val profileProtocolMappers = realmResource.clientScopes()
+			.findAll()
+			.single { it.name == "profile" }
+			.let { realmResource.clientScopes().get(it.id) }
+			.protocolMappers
+
+		profileProtocolMappers
+			.mappers
+			.singleOrNull { it.name == "displayName" }
+			?.let { profileProtocolMappers.update(it.id, it.configureDisplayName()) }
+			?: profileProtocolMappers.createMapper(
+				ProtocolMapperRepresentation().configureDisplayName()
+			)
 
 		val clientsResource = realmResource.clients()
 		val publicClient = clientsResource.findByClientId("snoty-public").firstOrNull() ?: let {
@@ -110,7 +168,7 @@ class KeycloakConfigurer(private var realmsResource: RealmsResource, private var
 		val rolesToAssign = clientsResource.get(realmManagementId)
 			.roles()
 			.list()
-			.filter { it.name in listOf("view-users", "query-users", "view-identity-providers") }
+			.filter { it.name in listOf("view-users", "query-users", "manage-users", "view-identity-providers") }
 		realmResource.users()
 			.get(serviceAccountUser.id)
 			.roles()

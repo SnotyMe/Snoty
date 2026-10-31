@@ -27,6 +27,11 @@
     "locale": "Sprache",
     "logOut": "Abmelden",
   },
+  "settings": {
+    "language": "Sprache",
+    "dateFormat": "Datumsformat",
+    "colorScheme": "Farbschema",
+  },
   "validation": {
     "required": "Dieses Feld ist erforderlich",
   },

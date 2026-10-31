@@ -63,6 +63,12 @@ export interface KeycloakAuthenticationMetadata {
      * @type {string}
      * @memberof KeycloakAuthenticationMetadata
      */
+    onboardingUrl?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof KeycloakAuthenticationMetadata
+     */
     publicClientId?: string | null;
     /**
      * 
@@ -102,6 +108,7 @@ export function KeycloakAuthenticationMetadataFromJSONTyped(json: any, ignoreDis
         'tokenUrl': json['tokenUrl'],
         'logoutUrl': json['logoutUrl'],
         'clientId': json['clientId'],
+        'onboardingUrl': json['onboardingUrl'] == null ? undefined : json['onboardingUrl'],
         'publicClientId': json['publicClientId'] == null ? undefined : json['publicClientId'],
         'providers': ((json['providers'] as Array<any>).map(KeycloakIdentityProviderFromJSON)),
     };
@@ -130,6 +137,7 @@ export function KeycloakAuthenticationMetadataToJSONTyped(value?: KeycloakAuthen
         'tokenUrl': value['tokenUrl'],
         'logoutUrl': value['logoutUrl'],
         'clientId': value['clientId'],
+        'onboardingUrl': value['onboardingUrl'],
         'publicClientId': value['publicClientId'],
         'providers': ((value['providers'] as Array<any>).map(KeycloakIdentityProviderToJSON)),
     };

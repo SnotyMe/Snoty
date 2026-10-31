@@ -10,6 +10,7 @@ data class KeycloakAuthenticationMetadata(
     val tokenUrl: String,
     val logoutUrl: String,
     val clientId: String,
+    val onboardingUrl: String?,
     val publicClientId: String?,
     val providers: List<KeycloakIdentityProvider>,
 ) : AuthenticationMetadata
