@@ -37,3 +37,9 @@ const { clearHelp, getDocsUrl } = nodeHelpStore
 		</template>
 	</UDashboardSidebar>
 </template>
+
+<style>
+[data-dragging=true] iframe {
+	pointer-events: none;
+}
+</style>
