@@ -14,20 +14,19 @@ de:
 </i18n>
 
 <script setup lang="ts">
-import FlowMenuDrawer from "~/components/flow/button/FlowMenuDrawer.vue"
-import { FlowDrawer } from "~/types/drawer"
 import NodeFieldRow from "~/components/node/NodeFieldRow.vue"
 import { type NodeMetadata, NodeMetadataStereotypeEnum } from "~/api/backend/generated"
 import { defaultRecordFromSchema } from "~/utils/node"
 import { useFlowNodes } from "~/composables/node/useFlowNodes"
 import { useFlowState } from "~/composables/flow/useFlowState.ts"
 import PillFilter from "~/components/ui/PillFilter.vue"
+import FlowMenuPanel from "~/components/flow/button/FlowMenuPanel.vue"
+import { useFlowPanelStore } from "~/stores/flowPanel.ts"
 
 const { t } = useI18n({ useScope: "local" })
 const { createNode } = useFlowNodes()
 const flowState = useFlowState()
 
-const open = defineModel<FlowDrawer | undefined>()
 const query = ref("")
 
 const FILTER_ALL = "all"
@@ -60,6 +59,8 @@ const items = computed(() => metadata.value
 	})),
 )
 
+const { close } = useFlowPanelStore()
+
 async function addNode(metadata: NodeMetadata) {
 	const settings = {
 		...defaultRecordFromSchema(metadata.settings),
@@ -79,35 +80,38 @@ async function addNode(metadata: NodeMetadata) {
 	})
 
 	flowState.createNode(created)
-	open.value = undefined
+	close()
 }
 </script>
 
 <template>
-	<FlowMenuDrawer
-		:is-open="open === FlowDrawer.NodeAdd"
+	<FlowMenuPanel
+		:panel="FlowPanel.NodeAdd"
 		horizontal-align="left"
 		width="min(40em, 100%)"
 		height="min(50em, 100%)"
 		inner-class="flex flex-col gap-2"
 	>
-		<UInput
-			v-model="query"
-			icon="i-lucide-search"
-			variant="subtle"
-			:placeholder="t('query.placeholder')"
-			:ui="{ trailing: 'pe-0' }"
-		>
-			<template v-if="query.length" #trailing>
-				<UButton
-					color="neutral"
-					variant="link"
-					size="lg"
-					icon="i-lucide-x"
-					@click="query = ''"
-				/>
-			</template>
-		</UInput>
+		<template #header>
+			<UInput
+				v-model="query"
+				icon="i-lucide-search"
+				variant="subtle"
+				:placeholder="t('query.placeholder')"
+				:ui="{ trailing: 'pe-0' }"
+				class="w-full"
+			>
+				<template v-if="query.length" #trailing>
+					<UButton
+						color="neutral"
+						variant="link"
+						size="lg"
+						icon="i-lucide-x"
+						@click="query = ''"
+					/>
+				</template>
+			</UInput>
+		</template>
 		<PillFilter
 			v-model="stereotypeFilter"
 			:items="stereotypeItems"
@@ -153,5 +157,5 @@ async function addNode(metadata: NodeMetadata) {
 				</span>
 			</template>
 		</UAccordion>
-	</FlowMenuDrawer>
+	</FlowMenuPanel>
 </template>

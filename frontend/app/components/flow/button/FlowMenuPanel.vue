@@ -1,25 +1,29 @@
 <script setup lang="ts">
-// TODO: totally re-do (converted from Svelte)
-interface PopupProps {
-	isOpen: boolean
-	width?: string
-	height?: string
-	class?: string
-	innerClass?: string
+import type { FlowPanel } from "~/stores/flowPanel.ts"
+import { useFlowPanelStore } from "~/stores/flowPanel.ts"
+
+const props = defineProps<{
+	panel: FlowPanel
 	verticalAlign?: "top" | "bottom"
 	horizontalAlign?: "left" | "right"
-}
+	width: string
+	height: string
+	class?: string
+	innerClass?: string
+}>()
 
-const props = defineProps<PopupProps>()
-
+const horizontalAlign = computed(() => props.horizontalAlign ?? "left")
 const verticalAlign = computed(() => props.verticalAlign ?? "top")
 
 const containerStyle = computed(() => ({
-	[props.horizontalAlign ?? "left"]: "var(--x-padding)",
+	[horizontalAlign.value]: "var(--x-padding)",
 	[verticalAlign.value]: "var(--y-padding)",
 	width: props.width,
 	height: props.height,
 }))
+
+const { close, isOpen: isSpecifiedPanelOpen } = useFlowPanelStore()
+const isOpen = computed(() => isSpecifiedPanelOpen(props.panel))
 </script>
 
 <template>
@@ -34,6 +38,26 @@ const containerStyle = computed(() => ({
 		:style="containerStyle"
 	>
 		<div :class="innerClass">
+			<div class="w-full flex justify-between items-center gap-2">
+				<div class="flex-1 flex items-center gap-1">
+					<UButton
+						v-if="horizontalAlign == 'right'"
+						variant="subtle"
+						icon="i-lucide-x"
+						@click="close"
+					/>
+					<slot name="header"/>
+				</div>
+				<div class="flex items-center gap-1">
+					<slot name="actions"/>
+					<UButton
+						v-if="horizontalAlign == 'left'"
+						variant="subtle"
+						icon="i-lucide-x"
+						@click="close"
+					/>
+				</div>
+			</div>
 			<slot/>
 		</div>
 	</div>

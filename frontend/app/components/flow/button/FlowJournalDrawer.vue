@@ -1,13 +1,4 @@
-<i18n lang="yaml">
-en:
-  title: Flow Journal
-de:
-  title: Flow-Journal
-</i18n>
-
 <script setup lang="ts">
-import { FlowDrawer } from "~/types/drawer"
-import FlowMenuDrawer from "~/components/flow/button/FlowMenuDrawer.vue"
 import type {
 	EnumeratedFlowExecutionStatusEnum,
 	FlowExecution,
@@ -22,13 +13,11 @@ import { useFlowExecutions } from "~/composables/flow/useFlowExecutions"
 import DateTimeFormat from "~/components/primitives/DateTimeFormat.vue"
 import LogTable from "~/components/logs/LogTable.vue"
 import FlowExecutionStatus from "~/components/flow/FlowExecutionStatus.vue"
-
-const { t } = useI18n({ useScope: "local" })
+import FlowMenuPanel from "~/components/flow/button/FlowMenuPanel.vue"
 
 const props = defineProps<{
 	flowId: string
 }>()
-const open = defineModel<FlowDrawer | undefined>()
 
 const filterLogLevel = ref<FlowNodeLogLevelEnum[]>(Object.values(FlowNodeLogLevelEnum))
 
@@ -71,17 +60,16 @@ onUnmounted(() => {
 </script>
 
 <template>
-	<FlowMenuDrawer
-		:is-open="open === FlowDrawer.Journal"
+	<FlowMenuPanel
+		:panel="FlowPanel.Journal"
 		horizontal-align="right"
 		width="min(80em, 100%)"
 		height="min(60em, 100%)"
 		inner-class="flex flex-col gap-2"
 	>
-		<div class="flex justify-between">
-			<h1 class="text-lg">{{ t('title') }}</h1>
+		<template #actions>
 			<LogLevelSelect v-model="filterLogLevel" multiple class="w-52"/>
-		</div>
+		</template>
 
 		<div class="overflow-auto shrink">
 			<div v-for="execution in executions ?? []" :key="execution.jobId" class="mb-4">
@@ -102,5 +90,5 @@ onUnmounted(() => {
 				/>
 			</div>
 		</div>
-	</FlowMenuDrawer>
+	</FlowMenuPanel>
 </template>

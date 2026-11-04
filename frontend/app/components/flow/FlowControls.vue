@@ -17,11 +17,7 @@ const { renameFlow } = useFlow(flow.value.id)
 const { nodes, edges } = useFlowState()
 const { fitView } = useVueFlow()
 
-const openDrawer = ref<FlowDrawer | undefined>()
-
-function toggleDrawer(drawer: FlowDrawer) {
-	openDrawer.value = openDrawer.value === drawer ? undefined : drawer
-}
+const { toggle: togglePanel, isOpen: isPanelOpen } = useFlowPanelStore()
 
 const { layout } = useElkLayout()
 
@@ -52,8 +48,8 @@ const { executeImmediate: layoutGraph } = useAsyncState(doLayoutGraph, null, { i
 			<UIcon name="i-lucide-network"/>
 		</ControlButton>
 	</Controls>
-	<NodeAddDrawer v-model="openDrawer"/>
-	<FlowJournalDrawer v-model="openDrawer" :flow-id="flow.id"/>
+	<NodeAddDrawer/>
+	<FlowJournalDrawer :flow-id="flow.id"/>
 	<Controls
 		position="top-left"
 		:show-zoom="false"
@@ -62,7 +58,7 @@ const { executeImmediate: layoutGraph } = useAsyncState(doLayoutGraph, null, { i
 	>
 		<div class="flex items-center gap-2">
 			<UDashboardSidebarToggle/>
-			<ControlButton @click="toggleDrawer(FlowDrawer.NodeAdd)">
+			<ControlButton @click="togglePanel(FlowPanel.NodeAdd)">
 				<UIcon name="i-lucide-plus"/>
 			</ControlButton>
 			<UInput
@@ -82,8 +78,8 @@ const { executeImmediate: layoutGraph } = useAsyncState(doLayoutGraph, null, { i
 		<div class="flex vue-flow__controls-horizontal">
 			<FlowTriggerButton/>
 			<div>
-				<ControlButton @click="toggleDrawer(FlowDrawer.Journal)">
-					<UIcon :name="openDrawer === FlowDrawer.Journal ? `i-lucide-scroll-text` : `i-lucide-scroll`"/>
+				<ControlButton @click="togglePanel(FlowPanel.Journal)">
+					<UIcon :name="isPanelOpen(FlowPanel.Journal) ? `i-lucide-scroll-text` : `i-lucide-scroll`"/>
 				</ControlButton>
 				<FlowExportButton :flow="flow"/>
 			</div>
