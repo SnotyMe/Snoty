@@ -34,7 +34,7 @@ const FILTER_ALL = "all"
 const explicitStereotypeFilter = ref()
 const stereotypeFilter = computed({
 	get: () => explicitStereotypeFilter.value
-		?? (flowState.nodes.value.length > 0 ? FILTER_ALL : NodeMetadataStereotypeEnum.Start),
+		?? (flowState.nodes.value.length > 0 ? FILTER_ALL : NodeMetadataStereotypeEnum.Trigger),
 	set: it => explicitStereotypeFilter.value = it,
 })
 const stereotypeItems = [
