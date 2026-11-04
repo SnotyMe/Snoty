@@ -81,6 +81,7 @@ async function addNode(metadata: NodeMetadata) {
 
 	flowState.createNode(created)
 	close()
+	query.value = ""
 }
 </script>
 
