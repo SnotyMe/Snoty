@@ -16,11 +16,11 @@ de:
 <script setup lang="ts">
 import NodeFieldRow from "~/components/node/NodeFieldRow.vue"
 import { type NodeMetadata, NodeMetadataStereotypeEnum } from "~/api/backend/generated"
-import { defaultRecordFromSchema } from "~/utils/node"
-import { useFlowNodes } from "~/composables/node/useFlowNodes"
+import { defaultRecordFromSchema } from "~/utils/node.ts"
+import { useFlowNodes } from "~/composables/node/useFlowNodes.ts"
 import { useFlowState } from "~/composables/flow/useFlowState.ts"
 import PillFilter from "~/components/ui/PillFilter.vue"
-import FlowMenuPanel from "~/components/flow/button/FlowMenuPanel.vue"
+import FlowMenuPanel from "~/components/flow/panel/FlowMenuPanel.vue"
 import { useFlowPanelStore } from "~/stores/flowPanel.ts"
 
 const { t } = useI18n({ useScope: "local" })

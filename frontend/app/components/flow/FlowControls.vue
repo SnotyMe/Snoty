@@ -2,13 +2,14 @@
 import { useElkLayout } from "~/composables/flow/useElkLayout"
 import { ControlButton, Controls } from "@vue-flow/controls"
 import FlowExportButton from "~/components/flow/button/FlowExportButton.vue"
-import FlowJournalDrawer from "~/components/flow/button/FlowJournalDrawer.vue"
-import NodeAddDrawer from "~/components/flow/button/NodeAddDrawer.vue"
+import FlowJournalPanel from "~/components/flow/panel/FlowJournalPanel.vue"
+import NodeAddPanel from "~/components/flow/panel/NodeAddPanel.vue"
 import { useFlowState } from "~/composables/flow/useFlowState.ts"
 import { useVueFlow } from "@vue-flow/core"
 import type { WorkflowWithNodes } from "~/api/backend/generated"
 import { useFlow } from "~/composables/flow/useFlow.ts"
 import FlowTriggerButton from "~/components/flow/button/FlowTriggerButton.vue"
+import PanelButton from "~/components/flow/panel/PanelButton.vue"
 
 const flow = defineModel<WorkflowWithNodes>({ required: true })
 
@@ -16,8 +17,6 @@ const { renameFlow } = useFlow(flow.value.id)
 
 const { nodes, edges } = useFlowState()
 const { fitView } = useVueFlow()
-
-const { toggle: togglePanel, isOpen: isPanelOpen } = useFlowPanelStore()
 
 const { layout } = useElkLayout()
 
@@ -48,8 +47,8 @@ const { executeImmediate: layoutGraph } = useAsyncState(doLayoutGraph, null, { i
 			<UIcon name="i-lucide-network"/>
 		</ControlButton>
 	</Controls>
-	<NodeAddDrawer/>
-	<FlowJournalDrawer :flow-id="flow.id"/>
+	<NodeAddPanel/>
+	<FlowJournalPanel :flow-id="flow.id"/>
 	<Controls
 		position="top-left"
 		:show-zoom="false"
@@ -58,9 +57,7 @@ const { executeImmediate: layoutGraph } = useAsyncState(doLayoutGraph, null, { i
 	>
 		<div class="flex items-center gap-2">
 			<UDashboardSidebarToggle/>
-			<ControlButton @click="togglePanel(FlowPanel.NodeAdd)">
-				<UIcon name="i-lucide-plus"/>
-			</ControlButton>
+			<PanelButton :panel="FlowPanel.NodeAdd" icon="i-lucide-plus"/>
 			<UInput
 				v-model="flow.name"
 				variant="ghost"
@@ -78,9 +75,7 @@ const { executeImmediate: layoutGraph } = useAsyncState(doLayoutGraph, null, { i
 		<div class="flex vue-flow__controls-horizontal">
 			<FlowTriggerButton/>
 			<div>
-				<ControlButton @click="togglePanel(FlowPanel.Journal)">
-					<UIcon :name="isPanelOpen(FlowPanel.Journal) ? `i-lucide-scroll-text` : `i-lucide-scroll`"/>
-				</ControlButton>
+				<PanelButton :panel="FlowPanel.Journal" icon="i-lucide-scroll" open-icon="i-lucide-scroll-text"/>
 				<FlowExportButton :flow="flow"/>
 			</div>
 		</div>

@@ -9,11 +9,11 @@ import type {
 } from "~/api/backend/generated"
 import { FlowNodeLogLevelEnum } from "~/api/backend/generated"
 import LogLevelSelect from "~/components/primitives/LogLevelSelect.vue"
-import { useFlowExecutions } from "~/composables/flow/useFlowExecutions"
+import { useFlowExecutions } from "~/composables/flow/useFlowExecutions.ts"
 import DateTimeFormat from "~/components/primitives/DateTimeFormat.vue"
 import LogTable from "~/components/logs/LogTable.vue"
 import FlowExecutionStatus from "~/components/flow/FlowExecutionStatus.vue"
-import FlowMenuPanel from "~/components/flow/button/FlowMenuPanel.vue"
+import FlowMenuPanel from "~/components/flow/panel/FlowMenuPanel.vue"
 
 const props = defineProps<{
 	flowId: string

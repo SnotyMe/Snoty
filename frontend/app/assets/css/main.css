@@ -70,6 +70,10 @@
 	cursor: pointer;
 	user-select: none;
 	@apply bg-muted hover:bg-accented fill-inverted not-last-of-type:border-b not-last-of-type:border-b-accented rounded-none p-1;
+
+	&[active=true]:not(:hover) {
+		@apply bg-elevated;
+	}
 }
 
 /* Horizontal Button compensation */
