@@ -21,7 +21,7 @@ const userDisplayName = computed(() =>
 		:ui="{ content: collapsed ? 'w-48' : 'w-(--reka-dropdown-menu-trigger-width)' }"
 	>
 		<UButton
-			:avatar="{ alt: userDisplayName }"
+			:avatar="{ alt: userDisplayName, size: 'md' }"
 			:label="collapsed ? undefined : userDisplayName"
 			:trailing-icon="collapsed ? undefined : 'i-lucide-chevrons-up-down'"
 			color="neutral"
@@ -31,17 +31,5 @@ const userDisplayName = computed(() =>
 				trailingIcon: 'text-dimmed',
 			}"
 		/>
-
-		<template #chip-leading="{ item }">
-			<div class="inline-flex items-center justify-center shrink-0 size-5">
-				<span
-					class="rounded-full ring ring-bg bg-(--chip-light) dark:bg-(--chip-dark) size-2"
-					:style="{
-						'--chip-light': `var(--color-${(item as any).chip}-500)`,
-						'--chip-dark': `var(--color-${(item as any).chip}-400)`,
-					}"
-				/>
-			</div>
-		</template>
 	</UDropdownMenu>
 </template>

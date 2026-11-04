@@ -36,20 +36,20 @@ const ui = (collapsed: boolean) => {
 				<AppLogoHeader class="shrink-0 size-12"/>
 				<UDashboardSidebarCollapse/>
 			</div>
-			<AppLogo v-else class="absolute"/> <!-- absolute ignores single-pixel cutoff => no layout shift -->
+			<div v-else class="group absolute">
+				<AppLogo class="block group-hover:hidden"/> <!-- absolute ignores single-pixel cutoff => no layout shift -->
+				<UDashboardSidebarCollapse class="not-group-hover:hidden!"/>
+			</div>
 		</template>
 
 		<template #default="{ collapsed }">
 			<UTheme :ui="ui(collapsed)">
-				<div class="flex flex-col">
-					<UDashboardSidebarCollapse v-if="collapsed" :size="collapsed ? 'sm' : 'md'"/>
-					<UDashboardSearchButton :collapsed="collapsed" :size="collapsed ? 'sm' : 'md'"/>
-				</div>
+				<UDashboardSearchButton :collapsed="collapsed" size="md"/>
 
 				<UNavigationMenu
 					:collapsed="collapsed"
 					:items="links[0]"
-					:ui="{ link: !collapsed && 'py-4', label: 'pl-1 pb-0' }"
+					:ui="{ link: collapsed ? 'mt-2.5 mb-5' : 'py-4', label: 'pl-1 pb-0' }"
 					orientation="vertical"
 				/>
 
