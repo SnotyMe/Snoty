@@ -95,10 +95,7 @@ const progress = computed(() => {
 				<UProgress v-model="progress" class="w-lg"/>
 			</div>
 		</Transition>
-		<Transition leave-active-class="duration-700" leave-from-class="opacity-100" leave-to-class="opacity-0">
-			<Background v-if="progress < 100" class="bg-default z-5"/>
-		</Transition>
-		<Background/>
+		<Background :class="{ 'bg-default z-5': progress < 100 }"/>
 	</VueFlow>
 	<FlowExecutionToast/>
 	<NodeHelpSidebar/>
