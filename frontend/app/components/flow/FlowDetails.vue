@@ -80,14 +80,24 @@ const emit = defineEmits<{
 </template>
 
 <style>
-.separated > *:not(:first-child)::before {
-	content: '';
-	display: inline-block;
-	vertical-align: middle;
-	width: 0.25rem;
-	height: 0.25rem;
-	margin: 0 0.5rem;
-	border-radius: 100%;
-	background: var(--ui-bg-accented);
+.separated {
+	flex-direction: column;
+}
+
+@media(min-width: 40em) {
+	.separated {
+		flex-direction: row;
+	}
+
+	.separated > *:not(:first-child)::before {
+		content: '';
+		display: inline-block;
+		vertical-align: middle;
+		width: 0.25rem;
+		height: 0.25rem;
+		margin: 0 0.5rem;
+		border-radius: 100%;
+		background: var(--ui-bg-accented);
+	}
 }
 </style>
