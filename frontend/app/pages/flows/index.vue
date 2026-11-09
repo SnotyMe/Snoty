@@ -60,9 +60,12 @@ const flowOverviewActions = useTemplateRef("flowOverviewActions")
 		<template #body>
 			<UProgress v-if="isLoading" size="xs"/>
 			<LoadingTexts v-if="isLoading" class="text-center"/>
-			<div v-if="flows" class="max-h-full grid grid-rows-[auto_1fr] *:w-full bg-muted border border-accented rounded divide-accented divide-y-3">
+			<div v-if="flows" class="max-h-full grid grid-rows-[auto_1fr] *:w-full bg-muted border border-accented rounded">
 				<FlowOverviewFilters class="p-2"/>
-				<div class="divide-default divide-y overflow-y-auto">
+
+				<USeparator size="md"/>
+
+				<UScrollArea :shadow="{ size: 60 }" :ui="{ viewport: 'divide-y divide-default' }">
 					<FlowDetails
 						v-for="flow of flows"
 						:key="flow.id"
@@ -71,22 +74,24 @@ const flowOverviewActions = useTemplateRef("flowOverviewActions")
 						@refresh="refresh"
 					/>
 					<FlowOverviewNoFlowsFound v-if="flows.length === 0" @open-create="flowOverviewActions!.openCreate"/>
-				</div>
-			</div>
-		</template>
+				</UScrollArea>
 
-		<template #footer>
-			<div v-if="(flows?.length ?? -1) > 0" class="flex items-center flex-col not-sm:pb-4 not-sm:pt-0 sm:flex-row sm:justify-between gap-2 p-2">
-				<p class="pl-1">
-					{{
-						$t('ui.pagination.info', {
-							from: filteredFlows?.length == 0 ? 0 : from + 1,
-							to,
-							total: filteredFlows?.length ?? '?',
-						})
-					}}
-				</p>
-				<UPagination v-model:page="page" :items-per-page="pageSize" :total="filteredFlows?.length"/>
+				<template v-if="(flows?.length ?? -1) > 0">
+					<USeparator size="md"/>
+
+					<div class="flex items-center flex-col sm:flex-row sm:justify-between gap-2 p-2">
+						<p class="pl-1">
+							{{
+								$t('ui.pagination.info', {
+									from: filteredFlows?.length == 0 ? 0 : from + 1,
+									to,
+									total: filteredFlows?.length ?? '?',
+								})
+							}}
+						</p>
+						<UPagination v-model:page="page" :items-per-page="pageSize" :total="filteredFlows?.length"/>
+					</div>
+				</template>
 			</div>
 		</template>
 	</UDashboardPanel>
