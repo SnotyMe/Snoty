@@ -1,25 +1,25 @@
 <i18n lang="yaml">
 de:
+  title: Zugangsdaten
   all: Alle
   selectToCreate: Wähle einen Zugangsdatentyp aus, um dessen Zugangsdaten zu erstellen
   search: Durchsuchen...
-  create: Erstellen
+  create: Zugangsdaten erstellen
   noCredentialTypeSelected: Wähle einen Zugangsdatentyp aus, um dessen Zugangsdaten zu verwalten.
   noCredentials:
     title: Noch keine Zugangsdaten verfügbar.
-    description: Erstelle mit dem Knopf in der rechten oberen Ecke neue!
   scope:
     USER: Nutzer
     ROLE: Rolle
     GLOBAL: Global
 en:
+  title: Credentials
   all: Alle
   selectToCreate: Select a Credential Type to create a new entry
   search: Search...
-  create: Create
+  create: Create Credential
   noCredentials:
     title: No Credentials available yet.
-    description: Create new ones with the button in the top right corner!
   scope:
     USER: User
     ROLE: Role
@@ -34,11 +34,11 @@ import CredentialCreateButton from "~/components/credential/CredentialCreateButt
 import { CredentialDtoScopeEnum } from "~/api/backend/generated"
 import CredentialGrid from "~/components/credential/CredentialGrid.vue"
 
-useHead({
-	title: "Credentials",
-})
-
 const { t } = useI18n({ useScope: "local" })
+
+useHead({
+	title: () => t("title"),
+})
 
 const selectedType = useRouteQuery<string | undefined>("type")
 
@@ -85,7 +85,7 @@ const credentialCreateButton = useTemplateRef("credentialCreateButton")
 <template>
 	<UDashboardPanel id="credentials">
 		<template #header>
-			<UDashboardNavbar title="Credentials">
+			<UDashboardNavbar :title="t('title')">
 				<template #right>
 					<CredentialCreateButton
 						v-if="selectedType && credentialDefinitions"
@@ -152,7 +152,6 @@ const credentialCreateButton = useTemplateRef("credentialCreateButton")
 						<UEmpty
 							icon="i-lucide-ghost"
 							:title="t('noCredentials.title')"
-							:description="t('noCredentials.description')"
 							variant="naked"
 							:actions="[{ label: t('create'), icon: 'i-lucide-plus', onClick: () => credentialCreateButton?.open() }]"
 						/>
