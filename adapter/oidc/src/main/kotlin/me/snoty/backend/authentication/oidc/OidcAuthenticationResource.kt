@@ -1,5 +1,6 @@
 package me.snoty.backend.authentication.oidc
 
+import com.auth0.jwt.JWT
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -34,7 +35,13 @@ data class OAuth2TokenResponse(
 	// used to sign-out without redirects
 	@SerialName("id_token")
 	val idToken: String?,
-)
+) {
+	fun appendToCookies(response: ApplicationResponse) {
+		response.cookies.append("access_token", accessToken)
+		if (refreshToken != null)
+			response.cookies.append("refresh_token", refreshToken)
+	}
+}
 
 @Single
 @Named("oidcAuthentication")
@@ -88,9 +95,7 @@ fun oidcAuthenticationResource(
 				return@post call.respondStatus(UnauthorizedException("Failed to get token"))
 			}
 			val token = response.body<OAuth2TokenResponse>()
-			call.response.cookies.append("access_token", token.accessToken)
-			if (token.refreshToken != null)
-				call.response.cookies.append("refresh_token", token.refreshToken)
+			token.appendToCookies(call.response)
 			call.respond(token)
 		}.describe {
 			parameters {
@@ -124,17 +129,33 @@ fun oidcAuthenticationResource(
 		post("/refresh") {
 			val refreshToken = call.queryParameters["refresh_token"]
 				?: return@post call.respondStatus(BadRequestException("Refresh token is missing"))
+
+			val refreshTokenJwt = JWT.decode(refreshToken)
+			val clientId = refreshTokenJwt.claims["azp"]?.asString()
+				?: authConfig.clientId
+
 			val response = httpClient.submitForm(
 				url = serverSettings.accessTokenUrl,
 				formParameters = parameters {
 					set("grant_type", "refresh_token")
 					set("refresh_token", refreshToken)
-					set("client_id", authConfig.clientId)
+					set("client_id", clientId)
 					set("client_secret", authConfig.clientSecret)
 				}
 			)
 
-			call.respondBytes(contentType = ContentType.Application.Json, bytes = response.bodyAsBytes())
+			if (response.status.isSuccess()) {
+				val token = response.body<OAuth2TokenResponse>()
+				token.appendToCookies(call.response)
+
+				return@post call.respond(token)
+			} else {
+				val message = response.bodyAsText()
+				logger.debug {
+					"Failed to refresh token: ${response.status} $message"
+				}
+				return@post call.respondStatus(UnauthorizedException("Failed to refresh token"))
+			}
 		}.describe {
 			parameters {
 				query("refresh_token") {
