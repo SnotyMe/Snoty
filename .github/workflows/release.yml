@@ -2,7 +2,7 @@ name: Release
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
 
 permissions:
   packages: write
@@ -25,6 +25,8 @@ jobs:
         with:
           # won't be used but is required by the action
           images: dummy
+          flavor: |
+            prefix=v
           tags: |
             type=semver,pattern={{major}}
             type=semver,pattern={{major}}.{{minor}}
@@ -38,13 +40,13 @@ jobs:
       - name: Build docker image
         id: build-docker-image
         run: |
-          additional_tags="$(echo "$DOCKER_METADATA_OUTPUT_TAGS" | tr '\n' ' ' | sed 's/dummy://g')"
+          tags="$(echo "$DOCKER_METADATA_OUTPUT_TAGS" | tr '\n' ' ' | sed 's/dummy://g')"
 
           application_version="$(./gradlew properties -q | awk '/^version:/ {print $2}')"
           echo "application_version=$application_version" >> "$GITHUB_OUTPUT"
 
           ./gradlew \
-            -Pme.snoty.docker.tags="$additional_tags" \
+            -Pme.snoty.docker.tags="$tags" \
             -Pme.snoty.github.run="${{github.run_id}}:${{github.run_number}}" \
             build jibDockerBuild
 
