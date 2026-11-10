@@ -6,10 +6,7 @@ export enum FlowPanel {
 export const useFlowPanelStore = defineStore("flowPanel", () => {
 	const openPanel = ref<FlowPanel | undefined>(undefined)
 
-	watch(openPanel, o => console.log("open", o))
-
 	const open = (panel: FlowPanel | undefined) => {
-		console.log("runnig open", panel)
 		openPanel.value = panel
 	}
 
@@ -18,7 +15,6 @@ export const useFlowPanelStore = defineStore("flowPanel", () => {
 	}
 
 	const toggle = (panel: FlowPanel) => {
-		console.log("toggle", panel)
 		if (openPanel.value === panel) {
 			close()
 		} else {
