@@ -16,23 +16,20 @@ body = """
 {% for group, commits in commits | group_by(attribute="group") %}
     {%- if commits | length == 0 -%}{% break %}{%- endif -%}
     ### {{ group | striptags | trim | upper_first }}
-    {%- for commit in commits | filter(attribute="breaking", value=true) -%}
-        {%- if not commit.scope %}
-            - {% if commit.breaking %}[**breaking**] {% endif %}\
-                {{ self::commit_line(commit=commit) }}
-        {%- endif -%}
+    {%- for commit in commits | filter(attribute="breaking", value=true) %}
+        - [**breaking**] {% if with_scope and commit.scope %}**{{commit.scope}}**: {% endif %}\
+            {{ self::commit_line(commit=commit) }}
     {%- endfor -%}
     {%- for commit in commits
     | filter(attribute="scope")
-    | sort(attribute="breaking")
+    | filter(attribute="breaking", value=false)
     | sort(attribute="scope") %}
-        - {% if commit.breaking %}[**breaking**] {% endif %}{% if with_scope %}**{{commit.scope}}**: {% endif %}\
+        - {% if with_scope %}**{{commit.scope}}**: {% endif %}\
             {{ self::commit_line(commit=commit) }}
     {%- endfor %}
-    {% for commit in commits | sort(attribute="breaking") -%}
-        {%- if not commit.scope and not commit.breaking -%}
-            - {% if commit.breaking %}[**breaking**] {% endif %}\
-                {{ self::commit_line(commit=commit) }}
+    {% for commit in commits | filter(attribute="breaking", value=false) -%}
+        {%- if not commit.scope -%}
+            - {{ self::commit_line(commit=commit) }}
         {% endif -%}
     {%- endfor %}
     {% endfor -%}
