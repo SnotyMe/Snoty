@@ -5,7 +5,6 @@ de:
   selectToCreate: Wähle einen Zugangsdatentyp aus, um dessen Zugangsdaten zu erstellen
   search: Durchsuchen...
   create: Zugangsdaten erstellen
-  noCredentialTypeSelected: Wähle einen Zugangsdatentyp aus, um dessen Zugangsdaten zu verwalten.
   noCredentials:
     title: Noch keine Zugangsdaten verfügbar.
   scope:
@@ -194,7 +193,7 @@ const credentialCreateButton = useTemplateRef("credentialCreateButton")
 					</div>
 				</div>
 				<div v-else>
-					<p class="text-center text-muted">{{ t('noCredentialTypeSelected') }}</p>
+					<UProgress/>
 				</div>
 			</div>
 		</template>
