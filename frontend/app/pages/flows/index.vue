@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useFlows } from "~/composables/flow/useFlows"
-import { useFlowListExecutions } from "~/composables/flow/useFlowListExecutions"
+import { useFlows } from "~/composables/flow/useFlows.ts"
+import { useFlowListExecutions } from "~/composables/flow/useFlowListExecutions.ts"
 import FlowDetails from "~/components/flow/FlowDetails.vue"
 import LoadingTexts from "~/components/ui/LoadingTexts.vue"
 import FlowOverviewActions from "~/components/flow/overview/FlowOverviewActions.vue"
 import FlowOverviewFilters from "~/components/flow/overview/FlowOverviewFilters.vue"
-import { useFlowFiltersStore } from "~/stores/flowFilters"
+import { useFlowFiltersStore } from "~/stores/flowFilters.ts"
 import FlowOverviewNoFlowsFound from "~/components/flow/overview/FlowOverviewNoFlowsFound.vue"
 
 useHead({

@@ -16,11 +16,6 @@ export const useNavigation = () => {
 	const links = computed<[NavigationMenuItem[], NavigationMenuItem[]]>(() => [
 		[
 			{
-				label: t("navigation.page.home"),
-				icon: "i-lucide-house",
-				to: "/",
-			},
-			{
 				label: t("navigation.page.flows"),
 				icon: "i-lucide-workflow",
 				to: "/flows",
