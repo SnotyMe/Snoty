@@ -2,16 +2,17 @@ package me.snoty.backend.wiring.credential
 
 import com.mongodb.client.model.Accumulators
 import com.mongodb.client.model.Aggregates
-import com.mongodb.client.model.Filters
-import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import com.mongodb.kotlin.client.model.Filters
 import com.mongodb.kotlin.client.model.Projections.projection
+import com.mongodb.kotlin.client.model.Updates
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import me.snoty.backend.authentication.AuthenticationProvider
 import me.snoty.backend.authentication.Role
+import me.snoty.backend.database.mongo.EMPTY
 import me.snoty.backend.database.mongo.objectId
 import me.snoty.backend.utils.NotFoundException
 import me.snoty.backend.utils.bson.decode
@@ -63,7 +64,7 @@ class MongoCredentialService(
 		val types = definitions.map { it.type }
 
 		val matchFilter = Filters.and(
-			Filters.`in`(MongoCredential::type.name, types),
+			Filters.`in`(MongoCredential::type, types),
 			CredentialFilters.credentialVisible(userId, userRoles)
 		)
 		val count = "count"
@@ -101,7 +102,7 @@ class MongoCredentialService(
 
 		return collection.find(
 			Filters.and(
-				Filters.eq(MongoCredential::type.name, credentialType),
+				Filters.eq(MongoCredential::type, credentialType),
 				CredentialFilters.credentialVisible(userId, roles)
 			)
 		).map {
@@ -122,7 +123,7 @@ class MongoCredentialService(
 
 		return collection.find(
 			Filters.and(
-				Filters.eq(MongoCredential::type.name, credentialType),
+				if (credentialType != null) Filters.eq(MongoCredential::type, credentialType) else Filters.EMPTY,
 				CredentialFilters.credentialVisible(userId, userRoles)
 			)
 		).map { credential ->
@@ -139,7 +140,7 @@ class MongoCredentialService(
 		val userRoles = authenticationProvider.getRolesById(userId)
 		val credential = collection
 			.find(Filters.and(
-				Filters.eq(MongoCredential::_id.name, credentialId.objectId),
+				Filters.eq(MongoCredential::_id, credentialId.objectId),
 				CredentialFilters.credentialVisible(userId, userRoles)
 			))
 			.firstOrNull()
@@ -183,7 +184,7 @@ class MongoCredentialService(
 		val userRoles = authenticationProvider.getRolesById(userId)
 		val credential = collection.find(
 			Filters.and(
-				Filters.eq(MongoCredential::_id.name, credentialId.objectId),
+				Filters.eq(MongoCredential::_id, credentialId.objectId),
 				CredentialFilters.credentialVisible(userId, userRoles)
 			)
 		).firstOrNull() ?: return null
@@ -207,7 +208,7 @@ class MongoCredentialService(
 		val notFoundException = NotFoundException("Credential ${credential.id} not found or access denied")
 
 		val old = collection.find(
-			Filters.eq(MongoCredential::_id.name, credential.id.objectId)
+			Filters.eq(MongoCredential::_id, credential.id.objectId)
 		).firstOrNull() ?: throw notFoundException
 
 		if (!old.canReadAndWrite(userId, userRoles)) throw notFoundException
@@ -215,15 +216,15 @@ class MongoCredentialService(
 		val dataDocument = codecRegistry.encode(data)
 
 		collection.updateOne(
-			Filters.eq(MongoCredential::_id.name, credential.id.objectId),
+			Filters.eq(MongoCredential::_id, credential.id.objectId),
 			Updates.combine(
-				Updates.set(MongoCredential::name.name, name),
-				Updates.set(MongoCredential::data.name, dataDocument)
+				Updates.set(MongoCredential::name, name),
+				Updates.set(MongoCredential::data, dataDocument)
 			),
 		)
 
 		val new = collection.find(
-			Filters.eq(MongoCredential::_id.name, credential.id.objectId)
+			Filters.eq(MongoCredential::_id, credential.id.objectId)
 		).firstOrNull() ?: throw notFoundException
 
 		val definition = registry.lookupByType(old.type)
@@ -232,7 +233,7 @@ class MongoCredentialService(
 
 	override suspend fun delete(credential: ResolvedCredential<*>): Boolean {
 		return collection.deleteOne(
-			Filters.eq(MongoCredential::_id.name, credential.id.objectId)
+			Filters.eq(MongoCredential::_id, credential.id.objectId)
 		).deletedCount == 1L
 	}
 }
