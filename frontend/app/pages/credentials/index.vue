@@ -32,6 +32,7 @@ import { useRouteQuery } from "@vueuse/router"
 import CredentialCreateButton from "~/components/credential/CredentialCreateButton.vue"
 import { CredentialDtoScopeEnum } from "~/api/backend/generated"
 import CredentialGrid from "~/components/credential/CredentialGrid.vue"
+import SearchField from "~/components/ui/SearchField.vue"
 
 const { t } = useI18n({ useScope: "local" })
 
@@ -50,7 +51,7 @@ const filteredCredentialOverview = computed(() => [
 	{
 		displayName: t("all"),
 		type: undefined,
-		count: undefined,
+		count: credentialDefinitions.value?.reduce((acc, curr) => acc + (curr.count || 0), 0) ?? 0,
 	},
 	...(credentialDefinitions.value?.filter(it =>
 		it.type == undefined || it.type === selectedType.value
@@ -106,44 +107,29 @@ const credentialCreateButton = useTemplateRef("credentialCreateButton")
 		<template #body>
 			<div class="grid grid-cols-[25%_auto] size-full gap-6">
 				<div class="max-w-2xl flex flex-col gap-4">
-					<UInput
-						v-model="query"
-						icon="i-lucide-search"
-						type="text"
-						:placeholder="t('search')"
-						:ui="{ trailing: 'pe-1' }"
-					>
-						<template v-if="query?.length" #trailing>
-							<UButton
-								color="neutral"
-								variant="link"
-								size="sm"
-								icon="i-lucide-circle-x"
-								@click="query = ''"
-							/>
-						</template>
-					</UInput>
+					<SearchField v-model="query" :placeholder="t('search')"/>
 					<div class="flex flex-col gap-1">
-						<UButton
-							v-for="credential in filteredCredentialOverview ?? []"
-							:key="credential.type"
-							:active="selectedType === credential.type"
-							variant="ghost"
-							color="neutral"
-							active-color="primary"
-							active-variant="subtle"
-							class="p-3 cursor-pointer flex justify-between"
-							@click="selectedType = credential.type"
-						>
-							<span>{{ credential.displayName }}</span>
-							<UBadge
-								v-if="credential.count != undefined"
-								:color="credential.count > 0 ? 'primary' : 'neutral'"
-								variant="subtle"
+						<template v-for="credential in filteredCredentialOverview ?? []" :key="credential.type">
+							<UButton
+								:active="selectedType === credential.type"
+								variant="ghost"
+								color="neutral"
+								active-color="primary"
+								active-variant="subtle"
+								class="pl-3 p-2 cursor-pointer flex justify-between"
+								@click="selectedType = credential.type"
 							>
-								{{ credential.count }}
-							</UBadge>
-						</UButton>
+								<span>{{ credential.displayName }}</span>
+								<UBadge
+									v-if="credential.count != undefined"
+									:color="credential.count > 0 ? 'primary' : 'neutral'"
+									variant="subtle"
+								>
+									{{ credential.count }}
+								</UBadge>
+							</UButton>
+							<USeparator v-if="credential.type == undefined" class="my-2"/>
+						</template>
 					</div>
 				</div>
 				<div v-if="credentialDefinitions && pageCredentials" class="space-y-4 overflow-y-auto">

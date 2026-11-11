@@ -27,6 +27,7 @@ de:
 
 <script setup lang="ts">
 import { useFlowFiltersStore } from "~/stores/flowFilters"
+import SearchField from "~/components/ui/SearchField.vue"
 
 const { t } = useI18n({ useScope: "local" })
 
@@ -36,35 +37,11 @@ const sortOptions = flowFiltersStore.sortOptions.map(it => ({
 	...it,
 	label: t(`sort.${it.key}.${it.desc ? "desc" : "asc"}`),
 }))
-
-const queryInput = useTemplateRef("queryInput")
-defineShortcuts({
-	"/": () => {
-		queryInput.value?.inputRef?.focus()
-	},
-})
 </script>
 
 <template>
 	<div class="flex justify-between">
-		<UInput
-			ref="queryInput"
-			v-model="query"
-			:placeholder="t('search.placeholder')"
-			icon="i-lucide-search"
-		>
-			<template #trailing>
-				<UButton
-					v-if="query?.length"
-					color="neutral"
-					variant="link"
-					size="sm"
-					icon="i-lucide-circle-x"
-					@click="query = ''"
-				/>
-				<UKbd value="/"/>
-			</template>
-		</UInput>
+		<SearchField v-model="query" :placeholder="t('search.placeholder')"/>
 		<USelect
 			v-model="sort"
 			:items="sortOptions"
