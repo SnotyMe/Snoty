@@ -29,7 +29,7 @@ const props = defineProps<{
 	spec: Promise<object>
 }>()
 
-const { data: finalSpec, pending, status, error } = useAsyncData(() => props.spec.then(mapSpec))
+const { data: finalSpec, pending, status, error } = useAsyncData(props.fileName, () => props.spec.then(mapSpec))
 
 function mapSpec(originalSpec: object) {
 	return {
