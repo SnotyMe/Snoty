@@ -118,4 +118,8 @@ export default defineNuxtConfig({
 
 		defaultLocale: "en",
 	},
+
+	nuxtEmailRenderer: {
+		globalCss: ["layers/base/app/assets/css/base.css"],
+	},
 })

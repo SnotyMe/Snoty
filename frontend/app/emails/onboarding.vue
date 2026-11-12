@@ -1,14 +1,8 @@
-<script setup lang="ts">
-import brandCss from "#layers/base/app/assets/css/base.css?inline"
-</script>
-
 <template>
 	<EHtml class="dark" style="background-color: var(--ui-bg)">
 		<EPreview v-html="`Welcome, {{ displayName }}. Please verify your Account to get started.`"/>
 
-		<EHead>
-			<EStyle>{{ brandCss }}</EStyle>
-		</EHead>
+		<EHead/>
 		<EBody style="color: var(--ui-text); font-family: var(--font-sans, Arial)">
 			<EContainer style="background-color: color-mix(in oklab, var(--ui-bg-muted) 50%, transparent); border: var(--ui-border) 1px solid; border-radius: 8px; margin: 100px auto;">
 				<ESection style="padding: 20px; border-bottom: var(--ui-border) 1px solid">
