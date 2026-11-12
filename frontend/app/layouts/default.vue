@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import AppRoot from "#layers/base/app/components/framework/AppRoot.vue"
-import { useNavigation } from "~/composables/framework/useNavigation.ts"
-import { useUserMenu } from "~/composables/framework/useUserMenu.ts"
+import { useNavigation, useUserMenu } from "#imports"
 
 const { links } = useNavigation()
 const { items: userMenu } = useUserMenu()

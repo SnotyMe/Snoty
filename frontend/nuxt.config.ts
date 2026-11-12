@@ -1,4 +1,5 @@
 import { locales } from "./layers/base/shared/i18n.ts"
+import { fileURLToPath } from "node:url"
 
 const isStaticFileHosting = process.env.FRONTEND_STATIC_FILE_HOSTING === "true"
 const apiBaseUrl = process.env.API_BASE_URL ?? (() => {
@@ -28,6 +29,16 @@ export default defineNuxtConfig({
 
 	ssr: !isStaticFileHosting,
 
+	// auto import all components to allow overriding them downstream,
+	components: true,
+
+	imports: {
+		dirs: [
+			"composables/**",
+			"layers/base/app/composables",
+		],
+	},
+
 	devtools: {
 		enabled: true,
 	},
@@ -38,7 +49,7 @@ export default defineNuxtConfig({
 	},
 
 	css: [
-		"~/assets/css/main.css",
+		fileURLToPath(new URL("./app/assets/css/main.css", import.meta.url)),
 	],
 
 	vue: {
@@ -55,6 +66,10 @@ export default defineNuxtConfig({
 			apiBaseUrl,
 			docsBaseUrl: process.env.DOCS_BASE_URL ?? "https://docs.snoty.me/embed",
 		},
+	},
+
+	alias: {
+		"#upstream": fileURLToPath(new URL(".", import.meta.url)),
 	},
 
 	routeRules: {

@@ -6,6 +6,10 @@ export default defineNuxtConfig({
 		"@nuxtjs/i18n",
 	],
 
+	$meta: {
+		name: "base",
+	},
+
 	css: [
 		fileURLToPath(
 			new URL("./app/assets/css/base.css", import.meta.url),

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import AppLogoHeader from "./AppLogoHeader.vue"
-import AppLogo from "./AppLogo.vue"
-import UserMenu from "./UserMenu.vue"
 import type { DropdownMenuItem, NavigationMenuItem } from "@nuxt/ui"
 import type { AuthComposable } from "#layers/base/app/types/auth.ts"
 
@@ -33,11 +30,11 @@ const ui = (collapsed: boolean) => {
 	>
 		<template #header="{ collapsed }">
 			<div v-if="!collapsed" class="w-full flex items-center justify-between">
-				<AppLogoHeader class="shrink-0 size-12"/>
+				<FrameworkAppLogoHeader class="shrink-0"/>
 				<UDashboardSidebarCollapse/>
 			</div>
 			<div v-else class="group absolute">
-				<AppLogo class="block group-hover:hidden"/> <!-- absolute ignores single-pixel cutoff => no layout shift -->
+				<FrameworkAppLogo class="block group-hover:hidden"/> <!-- absolute ignores single-pixel cutoff => no layout shift -->
 				<UDashboardSidebarCollapse class="not-group-hover:hidden!"/>
 			</div>
 		</template>
@@ -63,7 +60,7 @@ const ui = (collapsed: boolean) => {
 		</template>
 
 		<template #footer="{ collapsed }">
-			<UserMenu :items="userMenu" :use-auth="useAuth" :collapsed="collapsed"/>
+			<FrameworkUserMenu :items="userMenu" :use-auth="useAuth" :collapsed="collapsed"/>
 		</template>
 	</UDashboardSidebar>
 </template>

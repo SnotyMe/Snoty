@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { NuxtError } from "#app"
 import AppRoot from "#layers/base/app/components/framework/AppRoot.vue"
-import { useNavigation } from "~/composables/framework/useNavigation.ts"
-import { useUserMenu } from "~/composables/framework/useUserMenu.ts"
+import { useUserMenu, useNavigation } from "#imports"
 
 defineProps<{
 	error: NuxtError
