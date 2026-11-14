@@ -35,14 +35,15 @@ class SpiAdapterSelector(
 			}
 		}.getOrElse {
 			when (it) {
-				is ConfigFailure.MissingConfigValue if it.type.jvmErasure == AdapterConfig::class -> {
-					logger.info { "No $configKey adapter selected!" }
-					return@getOrElse null
-				}
+				is ConfigFailure.MissingConfigValue if it.type.jvmErasure == AdapterConfig::class ->
+					throw NoAdapterSelectedException(configKey)
+
+				is ConfigFailure.DataClassFieldErrors if isAdapterUnconfigured(it) ->
+					throw NoAdapterSelectedException(configKey)
 
 				else -> throw ConfigException(it)
 			}
-		} ?: return emptyList()
+		}
 
 		val potential = providers.filter {
 			adapterConfig.adapter in it.supportedTypes
@@ -53,7 +54,13 @@ class SpiAdapterSelector(
 	}
 
 	override fun <T : Adapter> select(adapterClass: KClass<T>, configKey: String): T? =
-		selectPotential(adapterClass, configKey).singleOrNull()
+		try {
+			selectPotential(adapterClass, configKey).singleOrNull()
+		} catch (_: NoAdapterSelectedException) {
+			logger.info { "No adapter selected for $configKey" }
+
+			return null
+		}
 
 	override fun <T : Adapter> load(adapterClass: KClass<T>, configKey: String): T {
 		val potential = selectPotential(adapterClass, configKey)
@@ -69,22 +76,23 @@ class SpiAdapterSelector(
 				))
 				return selected
 			}
-			potential.isEmpty() -> error("No $configKey adapter selected!")
-			else -> error("Multiple $configKey adapters selected! ($potential)")
+			potential.isEmpty() -> throw NoAdapterSelectedException(configKey)
+			else -> throw MultipleAdaptersSelectedException(configKey, potential)
 		}
 	}
 
-	override fun <T : Adapter> loadOptional(adapterClass: KClass<T>, configKey: String): T? = try {
-		load(adapterClass, configKey)
-	} catch (e: ConfigException) {
-		val fail = e.fail as? ConfigFailure.DataClassFieldErrors ?: throw e
+	/**
+	 * @return true if the exception was caused by the adapter config being unconfigured (i.e. missing the "adapter" field)
+	 */
+	private fun isAdapterUnconfigured(fail: ConfigFailure): Boolean {
+		val fail = fail as? ConfigFailure.DataClassFieldErrors ?: return false
+		if (fail.type.jvmErasure != AdapterConfig::class) return false
 
-		val error = fail.errors.list.singleOrNull() ?: throw e
+		val error = fail.errors.list.singleOrNull() ?: return false
+		if (error !is ConfigFailure.ParamFailure) return false
 
-		if (error !is ConfigFailure.ParamFailure) throw e
+		if (error.param.name != AdapterConfig::adapter.name || error.error !is ConfigFailure.MissingConfigValue) return false
 
-		if (error.param.name != AdapterConfig::adapter.name || error.error !is ConfigFailure.MissingConfigValue) throw e
-
-		null
+		return true
 	}
 }

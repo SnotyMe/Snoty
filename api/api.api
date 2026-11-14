@@ -48,8 +48,20 @@ public final class me/snoty/backend/adapter/AdapterKt {
 
 public abstract interface class me/snoty/backend/adapter/AdapterSelector {
 	public abstract fun load (Lkotlin/reflect/KClass;Ljava/lang/String;)Lme/snoty/backend/adapter/Adapter;
-	public abstract fun loadOptional (Lkotlin/reflect/KClass;Ljava/lang/String;)Lme/snoty/backend/adapter/Adapter;
+	public fun loadOptional (Lkotlin/reflect/KClass;Ljava/lang/String;)Lme/snoty/backend/adapter/Adapter;
 	public abstract fun select (Lkotlin/reflect/KClass;Ljava/lang/String;)Lme/snoty/backend/adapter/Adapter;
+}
+
+public final class me/snoty/backend/adapter/AdapterSelector$DefaultImpls {
+	public static fun loadOptional (Lme/snoty/backend/adapter/AdapterSelector;Lkotlin/reflect/KClass;Ljava/lang/String;)Lme/snoty/backend/adapter/Adapter;
+}
+
+public final class me/snoty/backend/adapter/MultipleAdaptersSelectedException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+}
+
+public final class me/snoty/backend/adapter/NoAdapterSelectedException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
 }
 
 public abstract interface class me/snoty/backend/authentication/AuthenticationAdapter : me/snoty/backend/adapter/Adapter {
