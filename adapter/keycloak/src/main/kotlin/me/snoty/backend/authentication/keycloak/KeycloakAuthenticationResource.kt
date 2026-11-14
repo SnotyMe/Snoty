@@ -24,8 +24,10 @@ import me.snoty.backend.utils.http.INTERNAL_HTTP_CLIENT
 import me.snoty.backend.utils.respondStatus
 import org.keycloak.admin.client.resource.RealmResource
 import org.keycloak.representations.idm.UserRepresentation
+import org.koin.core.Koin
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
+import org.koin.core.error.InstanceCreationException
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -50,9 +52,16 @@ fun keycloakAuthenticationResource(
 	config: Config,
 	keycloakConfig: KeycloakConfig,
 	realmResource: RealmResource,
-	mailTemplateService: MailTemplateService,
+	koin: Koin,
 ) = Resource {
 	val logger = KotlinLogging.logger {}
+
+	val mailTemplateService: MailTemplateService = try {
+		koin.get()
+	} catch (_: InstanceCreationException) {
+		logger.info { "Mail Adapter not configured, some Keycloak endpoints will be unavailable." }
+		return@Resource
+	}
 
 	val onboardingMailTemplate = javaClass
 		.getResource("/mail/onboarding.html")
