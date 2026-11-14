@@ -49,6 +49,14 @@ private fun OpenTelemetry.orNull() = takeIf { it != OpenTelemetry.noop() }
 private fun getGlobalOpenTelemetry() = GlobalOpenTelemetry.get().orNull()
 
 private fun getAutoConfiguredOpenTelemetry(koin: Koin, metadata: Resource) = AutoConfiguredOpenTelemetrySdk.builder()
+	.addPropertiesSupplier {
+		mapOf(
+			"otel.sdk.disabled" to "false",
+			"otel.traces.exporter" to "none",
+			"otel.metrics.exporter" to "none",
+			"otel.logs.exporter" to "none",
+		)
+	}
 	.addResourceCustomizer { resource, _ ->
 		resource.merge(metadata).apply {
 			KotlinLogging.logger {}.debug { "Created resource for OpenTelemetry: $this" }
