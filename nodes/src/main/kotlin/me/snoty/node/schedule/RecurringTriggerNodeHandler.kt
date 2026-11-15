@@ -23,7 +23,7 @@ data class RecurringTriggerNodeSettings(
 	companion object {
 		const val MIN = "PT5M"
 		val MIN_DURATION = Duration.parse(MIN)
-		const val MAX = "PT24H"
+		const val MAX = "P30D"
 		val MAX_DURATION = Duration.parse(MAX)
 	}
 

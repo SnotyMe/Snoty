@@ -1075,6 +1075,19 @@ public final class me/snoty/backend/utils/DevUtilsKt {
 	public static final fun otherwise (Lme/snoty/backend/utils/IfDevPipeline;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
+public final class me/snoty/backend/utils/DurationSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lme/snoty/backend/utils/DurationSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize-5sfh64U (Lkotlinx/serialization/encoding/Decoder;)J
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize-HG0u8IE (Lkotlinx/serialization/encoding/Encoder;J)V
+}
+
+public final class me/snoty/backend/utils/DurationUtilsKt {
+	public static final fun toProperIsoString-LRDsOJo (J)Ljava/lang/String;
+}
+
 public class me/snoty/backend/utils/ForbiddenException : me/snoty/backend/utils/HttpStatusException {
 	public fun <init> (Ljava/lang/String;)V
 }
@@ -2368,6 +2381,7 @@ public final class me/snoty/backend/wiring/node/metadata/NodeMetadata$Companion 
 
 public final class me/snoty/backend/wiring/node/metadata/NodeMetadataUtilsKt {
 	public static final fun getMetadataJson ()Lkotlinx/serialization/json/Json;
+	public static final fun getMetadataSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
 }
 
 public final class me/snoty/backend/wiring/node/metadata/NodeStereotype : java/lang/Enum {

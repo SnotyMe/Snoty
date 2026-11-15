@@ -1,6 +1,7 @@
 package me.snoty.backend.schema
 
-import io.ktor.openapi.JsonSchema
+import io.ktor.openapi.*
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
@@ -66,7 +67,9 @@ sealed class SchemaFieldDetails {
 	@Serializable
 	@SerialName("Duration")
 	data class DurationDetails(
+		@Contextual
 		val min: Duration?,
+		@Contextual
 		val max: Duration?,
 	) : SchemaFieldDetails()
 }
