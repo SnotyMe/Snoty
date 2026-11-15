@@ -123,7 +123,7 @@ watch(settings, debouncedSettingsUpdate, { deep: true })
 						icon="i-lucide-circle-small"
 						:label="isAwaitingUpdate ? t('unsaved') : (error ? t('error') : t('saved'))"
 						variant="soft"
-						color="neutral"
+						:color="!isAwaitingUpdate && error ? 'error' : 'neutral'"
 						size="xs"
 						class="gap-0.5"
 					>
