@@ -1,8 +1,10 @@
 <i18n lang="yaml">
 en:
   showHiddenSettings: Show hidden Settings
+  noSettings: This Node has no settings.
 de:
   showHiddenSettings: Versteckte Einstellungen anzeigen
+  noSettings: Dieser Node hat keine Einstellungen.
 </i18n>
 
 <script setup lang="ts">
@@ -52,4 +54,5 @@ const hiddenFields = computed(() => allFields.value.filter(it => it.hidden))
 			</template>
 		</UCollapsible>
 	</div>
+	<p v-else class="grow text-muted flex items-center justify-center">{{ t('noSettings') }}</p>
 </template>
