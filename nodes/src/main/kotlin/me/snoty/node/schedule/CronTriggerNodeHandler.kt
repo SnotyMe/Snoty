@@ -23,7 +23,7 @@ data class CronTriggerNodeSettings(
 
 @RegisterNode(
 	name = "cron_schedule_trigger",
-	displayName = "CRON Schedule",
+	displayName = "CRON Schedule Trigger",
 	icon = Icon(name = "lucide-calendar-clock"),
 	stereotype = NodeStereotype.TRIGGER,
 	settingsType = CronTriggerNodeSettings::class,

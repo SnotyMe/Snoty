@@ -41,7 +41,7 @@ data class RecurringTriggerNodeSettings(
 
 @RegisterNode(
 	name = "recurring_schedule_trigger",
-	displayName = "Recurring Schedule",
+	displayName = "Recurring Schedule Trigger",
 	icon = Icon(name = "lucide-clock"),
 	stereotype = NodeStereotype.TRIGGER,
 	settingsType = RecurringTriggerNodeSettings::class,
