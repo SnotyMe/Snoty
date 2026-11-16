@@ -16,8 +16,8 @@ class UserIdColumnType : ColumnType<UserId>() {
     override fun valueFromDB(value: Any): UserId =
         UserId(delegate.valueFromDB(value))
 
-    override fun valueToDB(value: UserId?): Any? =
-        delegate.valueToDB(value?.value)
+    override fun notNullValueToDB(value: UserId): Any =
+        delegate.notNullValueToDB(value.value)
 }
 
 fun Table.userId(name: String): Column<UserId> =

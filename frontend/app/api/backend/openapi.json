@@ -2,7 +2,7 @@
     "openapi": "3.1.1",
     "info": {
         "title": "snoty-backend",
-        "version": "0.8.0-alpha.4"
+        "version": "0.8.1"
     },
     "servers": [
         {
@@ -77,19 +77,86 @@
                 ]
             }
         },
-        "/auth/metadata": {
-            "get": {
+        "/auth/local/login": {
+            "post": {
                 "tags": [
                     "auth"
                 ],
                 "summary": "",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LocalAuthLoginRequest"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/AuthenticationMetadata"
+                                    "$ref": "#/components/schemas/LocalAuthLoginResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/local/register": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LocalAuthRegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LocalAuthLoginResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/local/refresh": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LocalAuthRefreshRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LocalAuthLoginResponse"
                                 }
                             }
                         }
@@ -202,17 +269,24 @@
                 }
             }
         },
-        "/auth/userInfo": {
+        "/auth/metadata": {
             "get": {
                 "tags": [
                     "auth"
                 ],
                 "summary": "",
-                "security": [
-                    {
-                        "jwt-auth": []
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthenticationMetadata"
+                                }
+                            }
+                        }
                     }
-                ]
+                }
             }
         },
         "/info": {
@@ -1690,6 +1764,21 @@
                     "propertyName": "AuthenticationMetadata"
                 }
             },
+            "LocalAuthenticationMetadata": {
+                "type": "object",
+                "title": "LocalAuthenticationMetadata",
+                "properties": {
+                    "selfRegistration": {
+                        "$ref": "#/components/schemas/LocalSelfRegistrationMetadata"
+                    },
+                    "adapter": {
+                        "type": "string"
+                    }
+                },
+                "discriminator": {
+                    "propertyName": "AuthenticationMetadata"
+                }
+            },
             "OidcAuthenticationMetadata": {
                 "type": "object",
                 "title": "OidcAuthenticationMetadata",
@@ -1856,11 +1945,33 @@
                     }
                 }
             },
+            "LocalSelfRegistrationMetadata": {
+                "type": [
+                    "object",
+                    "null"
+                ],
+                "title": "LocalSelfRegistrationMetadata",
+                "required": [
+                    "enabled",
+                    "emailRegex"
+                ],
+                "properties": {
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "emailRegex": {
+                        "type": "string"
+                    }
+                }
+            },
             "AuthenticationMetadata": {
                 "title": "AuthenticationMetadata",
                 "oneOf": [
                     {
                         "$ref": "#/components/schemas/KeycloakAuthenticationMetadata"
+                    },
+                    {
+                        "$ref": "#/components/schemas/LocalAuthenticationMetadata"
                     },
                     {
                         "$ref": "#/components/schemas/OidcAuthenticationMetadata"
@@ -1899,17 +2010,66 @@
                     }
                 }
             },
-            "Role": {
-                "type": [
-                    "object",
-                    "null"
-                ],
-                "title": "Role",
+            "LocalAuthRegisterRequest": {
+                "type": "object",
+                "title": "LocalAuthRegisterRequest",
                 "required": [
-                    "name"
+                    "displayName",
+                    "email",
+                    "password"
                 ],
                 "properties": {
-                    "name": {
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LocalAuthLoginResponse": {
+                "type": "object",
+                "title": "LocalAuthLoginResponse",
+                "required": [
+                    "accessToken",
+                    "refreshToken"
+                ],
+                "properties": {
+                    "accessToken": {
+                        "type": "string"
+                    },
+                    "refreshToken": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LocalAuthLoginRequest": {
+                "type": "object",
+                "title": "LocalAuthLoginRequest",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LocalAuthRefreshRequest": {
+                "type": "object",
+                "title": "LocalAuthRefreshRequest",
+                "required": [
+                    "refreshToken"
+                ],
+                "properties": {
+                    "refreshToken": {
                         "type": "string"
                     }
                 }
@@ -2032,17 +2192,11 @@
                         ]
                     },
                     "min": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": "string",
                         "format": "duration"
                     },
                     "max": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": "string",
                         "format": "duration"
                     }
                 }
@@ -3241,6 +3395,21 @@
                 ],
                 "properties": {
                     "id": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Role": {
+                "type": [
+                    "object",
+                    "null"
+                ],
+                "title": "Role",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
                         "type": "string"
                     }
                 }

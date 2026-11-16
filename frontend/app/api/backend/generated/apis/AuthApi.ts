@@ -18,6 +18,10 @@ import * as runtime from '../runtime';
 import type {
   AuthenticationMetadata,
   KeycloakRegisterRequest,
+  LocalAuthLoginRequest,
+  LocalAuthLoginResponse,
+  LocalAuthRefreshRequest,
+  LocalAuthRegisterRequest,
   OAuth2TokenResponse,
   Role,
 } from '../models/index';
@@ -26,6 +30,14 @@ import {
     AuthenticationMetadataToJSON,
     KeycloakRegisterRequestFromJSON,
     KeycloakRegisterRequestToJSON,
+    LocalAuthLoginRequestFromJSON,
+    LocalAuthLoginRequestToJSON,
+    LocalAuthLoginResponseFromJSON,
+    LocalAuthLoginResponseToJSON,
+    LocalAuthRefreshRequestFromJSON,
+    LocalAuthRefreshRequestToJSON,
+    LocalAuthRegisterRequestFromJSON,
+    LocalAuthRegisterRequestToJSON,
     OAuth2TokenResponseFromJSON,
     OAuth2TokenResponseToJSON,
     RoleFromJSON,
@@ -34,6 +46,18 @@ import {
 
 export interface AuthKeycloakRegisterPostRequest {
     keycloakRegisterRequest?: KeycloakRegisterRequest;
+}
+
+export interface AuthLocalLoginPostRequest {
+    localAuthLoginRequest?: LocalAuthLoginRequest;
+}
+
+export interface AuthLocalRefreshPostRequest {
+    localAuthRefreshRequest?: LocalAuthRefreshRequest;
+}
+
+export interface AuthLocalRegisterPostRequest {
+    localAuthRegisterRequest?: LocalAuthRegisterRequest;
 }
 
 export interface AuthLogoutPostRequest {
@@ -127,6 +151,126 @@ export class AuthApi extends runtime.BaseAPI {
      */
     async authKeycloakRegisterPost(requestParameters: AuthKeycloakRegisterPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.authKeycloakRegisterPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Creates request options for authLocalLoginPost without sending the request
+     */
+    async authLocalLoginPostRequestOpts(requestParameters: AuthLocalLoginPostRequest): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/auth/local/login`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: LocalAuthLoginRequestToJSON(requestParameters['localAuthLoginRequest']),
+        };
+    }
+
+    /**
+     * 
+     */
+    async authLocalLoginPostRaw(requestParameters: AuthLocalLoginPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LocalAuthLoginResponse>> {
+        const requestOptions = await this.authLocalLoginPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LocalAuthLoginResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * 
+     */
+    async authLocalLoginPost(requestParameters: AuthLocalLoginPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LocalAuthLoginResponse> {
+        const response = await this.authLocalLoginPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for authLocalRefreshPost without sending the request
+     */
+    async authLocalRefreshPostRequestOpts(requestParameters: AuthLocalRefreshPostRequest): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/auth/local/refresh`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: LocalAuthRefreshRequestToJSON(requestParameters['localAuthRefreshRequest']),
+        };
+    }
+
+    /**
+     * 
+     */
+    async authLocalRefreshPostRaw(requestParameters: AuthLocalRefreshPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LocalAuthLoginResponse>> {
+        const requestOptions = await this.authLocalRefreshPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LocalAuthLoginResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * 
+     */
+    async authLocalRefreshPost(requestParameters: AuthLocalRefreshPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LocalAuthLoginResponse> {
+        const response = await this.authLocalRefreshPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for authLocalRegisterPost without sending the request
+     */
+    async authLocalRegisterPostRequestOpts(requestParameters: AuthLocalRegisterPostRequest): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/auth/local/register`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: LocalAuthRegisterRequestToJSON(requestParameters['localAuthRegisterRequest']),
+        };
+    }
+
+    /**
+     * 
+     */
+    async authLocalRegisterPostRaw(requestParameters: AuthLocalRegisterPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LocalAuthLoginResponse>> {
+        const requestOptions = await this.authLocalRegisterPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LocalAuthLoginResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * 
+     */
+    async authLocalRegisterPost(requestParameters: AuthLocalRegisterPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LocalAuthLoginResponse> {
+        const response = await this.authLocalRegisterPostRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**
@@ -391,42 +535,6 @@ export class AuthApi extends runtime.BaseAPI {
     async authTokenPost(requestParameters: AuthTokenPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<OAuth2TokenResponse> {
         const response = await this.authTokenPostRaw(requestParameters, initOverrides);
         return await response.value();
-    }
-
-    /**
-     * Creates request options for authUserInfoGet without sending the request
-     */
-    async authUserInfoGetRequestOpts(): Promise<runtime.RequestOpts> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/auth/userInfo`;
-
-        return {
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        };
-    }
-
-    /**
-     * 
-     */
-    async authUserInfoGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        const requestOptions = await this.authUserInfoGetRequestOpts();
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * 
-     */
-    async authUserInfoGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.authUserInfoGetRaw(initOverrides);
     }
 
 }

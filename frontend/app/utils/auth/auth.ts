@@ -1,10 +1,12 @@
 import type {
 	AuthenticationMetadata,
 	KeycloakAuthenticationMetadata,
+	LocalAuthenticationMetadata,
 	OidcAuthenticationMetadata,
 } from "~/api/backend/generated"
 import type { ButtonProps } from "@nuxt/ui"
 import { keycloakProvider } from "~/utils/auth/keycloak.ts"
+import { localProvider } from "~/utils/auth/local.ts"
 import { oidcProvider } from "~/utils/auth/oidc.ts"
 
 export interface RegisterRequest {
@@ -34,6 +36,8 @@ export interface AuthenticationProvider {
 
 export const getAuthenticationProvider = <A extends AuthenticationMetadata>(metadata: A): AuthenticationProvider => {
 	switch (metadata.adapter) {
+		case "local":
+			return localProvider(metadata as LocalAuthenticationMetadata)
 		case "keycloak":
 			return keycloakProvider(metadata as KeycloakAuthenticationMetadata)
 		case "oidc":

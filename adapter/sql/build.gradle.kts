@@ -5,6 +5,7 @@ plugins {
 
 dependencies { with (libs) {
 	compileOnly(projects.api)
+	compileOnly(projects.adapter.localauth.localauthApi)
 
 	implementation(database.exposed.core)
 	implementation(database.exposed.jdbc)

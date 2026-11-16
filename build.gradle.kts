@@ -64,6 +64,7 @@ dependencies { with(libs) {
     implementation(projects.adapter.sql)
 
 	// authentication
+    implementation(projects.adapter.localauth)
 	implementation(projects.adapter.oidc)
 	implementation(projects.adapter.keycloak)
 
