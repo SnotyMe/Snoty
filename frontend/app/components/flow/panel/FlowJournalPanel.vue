@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { useInfiniteScroll } from "@vueuse/core"
 import type {
 	EnumeratedFlowExecutionStatusEnum,
-	FlowExecution,
 	FlowExecutionEventFlowEndedEvent,
 	FlowExecutionEventFlowLogEvent,
 	FlowExecutionEventFlowStartedEvent,
@@ -19,11 +19,67 @@ const props = defineProps<{
 	flowId: string
 }>()
 
+const PAGE_SIZE = 10
+
+const scrollContainer = ref<HTMLElement | null>(null)
 const filterLogLevel = ref<FlowNodeLogLevelEnum[]>(Object.values(FlowNodeLogLevelEnum))
+const isLoadingMore = ref(false)
+const hasMore = ref(true)
 
 const { getFlowExecutions, connect, disconnect } = useFlowExecutions(props.flowId)
 
-const { data: executions } = useAsyncData(() => getFlowExecutions() as Promise<FlowExecution[]>, { deep: true })
+const { data: executions, status } = useAsyncData(
+	() => `flow-executions-${props.flowId}`,
+	async () => {
+		const data = await getFlowExecutions(undefined, PAGE_SIZE)
+		if (data.length < PAGE_SIZE) {
+			hasMore.value = false
+		}
+		return data
+	},
+	{ deep: true },
+)
+
+const loadMore = async () => {
+	if (isLoadingMore.value || !hasMore.value || status.value === "pending") return
+
+	const currentExecutions = executions.value ?? []
+	if (currentExecutions.length === 0) return
+
+	const lastExecution = currentExecutions[currentExecutions.length - 1]
+	if (!lastExecution?.jobId) return
+
+	isLoadingMore.value = true
+	try {
+		const nextExecutions = await getFlowExecutions(lastExecution.jobId, PAGE_SIZE)
+		if (!nextExecutions || nextExecutions.length === 0) {
+			hasMore.value = false
+			return
+		}
+
+		if (nextExecutions.length < PAGE_SIZE) {
+			hasMore.value = false
+		}
+
+		executions.value = [
+			...currentExecutions,
+			...nextExecutions,
+		]
+	} catch (error) {
+		console.error("Failed to load more flow executions:", error)
+	} finally {
+		isLoadingMore.value = false
+	}
+}
+
+useInfiniteScroll(
+	scrollContainer,
+	loadMore,
+	{
+		distance: 50,
+		canLoadMore: () => hasMore.value && !isLoadingMore.value && status.value !== "pending",
+	},
+)
 
 onMounted(async () => {
 	const eventSource = await connect()
@@ -71,7 +127,7 @@ onUnmounted(() => {
 			<LogLevelSelect v-model="filterLogLevel" multiple class="w-52"/>
 		</template>
 
-		<div class="overflow-auto shrink">
+		<div ref="scrollContainer" class="overflow-auto shrink">
 			<div v-for="execution in executions ?? []" :key="execution.jobId" class="mb-4">
 				<div class="flex items-center gap-2">
 					<FlowExecutionStatus :value="execution.status as EnumeratedFlowExecutionStatusEnum" size="xs" variant="link"/>
@@ -88,6 +144,10 @@ onUnmounted(() => {
 					v-if="execution.logs"
 					:logs="execution.logs.filter((log: NodeLogEntryDto) => filterLogLevel.includes(log.level))"
 				/>
+			</div>
+
+			<div v-if="isLoadingMore" class="flex justify-center items-center py-2 text-muted">
+				<UIcon name="i-lucide-loader-2" class="animate-spin text-lg"/>
 			</div>
 		</div>
 	</FlowMenuPanel>
