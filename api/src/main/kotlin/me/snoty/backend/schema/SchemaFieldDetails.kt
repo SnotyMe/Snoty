@@ -68,8 +68,12 @@ sealed class SchemaFieldDetails {
 	@SerialName("Duration")
 	data class DurationDetails(
 		@Contextual
+		@JsonSchema.Type(JsonType.STRING)
+		@JsonSchema.Format("duration")
 		val min: Duration?,
 		@Contextual
+		@JsonSchema.Type(JsonType.STRING)
+		@JsonSchema.Format("duration")
 		val max: Duration?,
 	) : SchemaFieldDetails()
 }
