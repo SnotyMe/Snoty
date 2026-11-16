@@ -10,6 +10,7 @@ import type { WorkflowWithNodes } from "~/api/backend/generated"
 import { useFlow } from "~/composables/flow/useFlow.ts"
 import FlowTriggerButton from "~/components/flow/button/FlowTriggerButton.vue"
 import PanelButton from "~/components/flow/panel/PanelButton.vue"
+import AutoResizeInput from "~/components/ui/AutoResizeInput.vue"
 
 const flow = defineModel<WorkflowWithNodes>({ required: true })
 
@@ -58,7 +59,7 @@ const { executeImmediate: layoutGraph } = useAsyncState(doLayoutGraph, null, { i
 		<div class="flex items-center gap-2">
 			<UDashboardSidebarToggle/>
 			<PanelButton :panel="FlowPanel.NodeAdd" icon="i-lucide-plus"/>
-			<UInput
+			<AutoResizeInput
 				v-model="flow.name"
 				variant="ghost"
 				color="primary"
