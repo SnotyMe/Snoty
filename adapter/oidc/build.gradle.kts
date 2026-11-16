@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies { with (libs) {
-	api(ktor.client.core)
+	api(ktorLibs.client.core)
 
 	compileOnly(projects.adapter.adapterApi)
 }}

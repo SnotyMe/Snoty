@@ -18,7 +18,11 @@ catalog {
 			}
 			catalog.libraryAliases.forEach { alias ->
 				val lib = catalog.findLibrary(alias).get().get()
-				library(alias, lib.group, lib.name)
+				val fullAlias = when {
+					lib.group.startsWith("io.ktor") -> "ktor-$alias"
+					else -> alias
+				}
+				library(fullAlias, lib.group, lib.name)
 					.let {
 						val libVersion = lib.version!!
 						when (val version = versions[libVersion]) {

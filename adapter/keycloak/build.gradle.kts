@@ -18,7 +18,7 @@ dependencies { with(libs) {
 		exclude(group = "org.keycloak")
 	}
 	testImplementation(libs.tests.json)
-	testImplementation(libs.tests.ktor.server.testHost)
+	testImplementation(ktorLibs.server.testHost)
 }}
 
 testing.suites.withType<JvmTestSuite>().configureEach {

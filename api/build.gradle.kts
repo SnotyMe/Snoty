@@ -22,18 +22,18 @@ dependencies { with(libs) {
     api(log.kotlinLogging)
     api(log.logback)
 
-    api(ktor.openapi.schema)
+    api(ktorLibs.openapiSchema)
 
-    api(ktor.client.core)
-    api(ktor.client.okhttp)
-    api(ktor.client.contentNegotiation)
+    api(ktorLibs.client.core)
+    api(ktorLibs.client.okhttp)
+    api(ktorLibs.client.contentNegotiation)
 
-    api(ktor.server.core)
-    api(ktor.server.auth)
-    api(ktor.server.auth.jwt)
-    api(ktor.server.routing.openapi)
+    api(ktorLibs.server.core)
+    api(ktorLibs.server.auth)
+    api(ktorLibs.server.auth.jwt)
+    api(ktorLibs.server.routingOpenapi)
 
-    api(ktor.serialization.kotlinx.json)
+    api(ktorLibs.serialization.kotlinx.json)
     api(monitoring.ktor.opentelemetry)
 
     api(libraries.openfeature)

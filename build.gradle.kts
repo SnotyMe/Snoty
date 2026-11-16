@@ -6,7 +6,7 @@ apply(from = "version.gradle.kts")
 plugins {
     application
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ktor)
+    alias(ktorLibs.plugins.ktor)
     id("snoty.buildinfo-conventions")
     id("snoty.doctor-conventions")
     id("snoty.kotlin-conventions")
@@ -39,7 +39,7 @@ val devSourceSet = sourceSets.create("dev") {
 
 testing.suites.withType<JvmTestSuite>().configureEach {
     dependencies { with(libs) {
-        implementation(tests.ktor.server.testHost)
+        implementation(ktorLibs.server.testHost)
         implementation(tests.json)
         implementation(monitoring.opentelemetry.testing)
         implementation(devSourceSet.output)
@@ -80,27 +80,26 @@ dependencies { with(libs) {
     implementation(configuration.hoplite.yaml)
 
     // ktor server
-    implementation(ktor.serialization.kotlinx.json)
+    implementation(ktorLibs.serialization.kotlinx.json)
 
-    implementation(ktor.server.core)
-    implementation(ktor.server.netty)
+    implementation(ktorLibs.server.core)
+    implementation(ktorLibs.server.netty)
 
     // ktor plugins
-    implementation(ktor.server.sse)
-    implementation(ktor.server.cors)
-    implementation(ktor.server.call.logging)
-    implementation(ktor.server.call.id)
-    implementation(ktor.server.forwardedHeader)
-    implementation(ktor.server.defaultHeaders)
-    implementation(ktor.server.hostCommon)
-    implementation(ktor.server.statusPages)
-    implementation(ktor.server.doubleReceive)
-    implementation(ktor.server.auth)
-    implementation(ktor.server.auth.jwt)
-    implementation(ktor.server.contentNegotiation)
-    implementation(ktor.server.swagger)
-    implementation(ktor.server.openapi)
-    implementation(ktor.server.routing.openapi)
+    implementation(ktorLibs.server.sse)
+    implementation(ktorLibs.server.cors)
+    implementation(ktorLibs.server.callLogging)
+    implementation(ktorLibs.server.callId)
+    implementation(ktorLibs.server.forwardedHeader)
+    implementation(ktorLibs.server.defaultHeaders)
+    implementation(ktorLibs.server.statusPages)
+    implementation(ktorLibs.server.doubleReceive)
+    implementation(ktorLibs.server.auth)
+    implementation(ktorLibs.server.auth.jwt)
+    implementation(ktorLibs.server.contentNegotiation)
+    implementation(ktorLibs.server.swagger)
+    implementation(ktorLibs.server.openapi)
+    implementation(ktorLibs.server.routingOpenapi)
     implementation(cohort.ktor)
     implementation(koin.ktor)
 
@@ -108,7 +107,7 @@ dependencies { with(libs) {
 
     // monitoring
     implementation(monitoring.ktor.opentelemetry)
-    implementation(monitoring.ktor.server.metricsMicrometer)
+    implementation(ktorLibs.server.metrics.micrometer)
     implementation(monitoring.micrometer.prometheus)
     implementation(monitoring.opentelemetry.sdk.autoconfigure)
     implementation(monitoring.opentelemetry.exporter.otlp)
