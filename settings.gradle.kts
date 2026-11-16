@@ -20,6 +20,13 @@ include("nodes")
 listRootDirsIn("adapter")
 	.forEach {
 		include(":adapter:${it.name}")
+
+		listRootDirsIn("adapter/${it.name}")
+			.forEach { subdir ->
+				val subprojectName = ":adapter:${it.name}:${subdir.name}"
+				include(subprojectName)
+				project(subprojectName).name = "${it.name}-${subdir.name}"
+			}
 	}
 
 listRootDirsIn("conventions")
