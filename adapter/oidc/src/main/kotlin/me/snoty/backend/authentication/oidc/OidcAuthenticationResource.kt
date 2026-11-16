@@ -198,18 +198,6 @@ fun oidcAuthenticationResource(
 			get("/userInfo") {
 				call.respond(call.getUser())
 			}
-
-			get("/roles") {
-				val roles = call.getUserRoles()
-
-				call.respond(roles)
-			}.describe {
-				responses {
-					HttpStatusCode.OK {
-						schema = jsonSchema<List<Role>>()
-					}
-				}
-			}
 		}
 	}.describe {
 		tag("auth")

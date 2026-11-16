@@ -61,9 +61,7 @@ de:
 import * as z from "zod"
 import type { AuthFormField, FormSubmitEvent } from "@nuxt/ui"
 import { definePageMeta } from "#imports"
-import { AuthApi, type KeycloakAuthenticationMetadata, type KeycloakRegisterRequest } from "~/api/backend/generated"
-import { useApi } from "~/api/backend/api-clients.ts"
-import { useAuthProviders } from "~/composables/auth/useAuthProviders.ts"
+import { extendIf } from "~/utils/zod.ts"
 
 definePageMeta({
 	layout: "center",
@@ -74,6 +72,9 @@ const { t } = useI18n({ useScope: "local" })
 const route = useRoute()
 const backlink = route.query.to as string | undefined
 const defaultEmail = route.query.email as string | undefined
+
+const authStore = useAuth()
+const { authProvider } = storeToRefs(authStore)
 
 const fields = computed<AuthFormField[]>(() => [
 	{
@@ -91,17 +92,34 @@ const fields = computed<AuthFormField[]>(() => [
 		placeholder: t("displayName.placeholder"),
 		required: true,
 	},
+	...(
+		authProvider.value?.onboardingMode == "instant"
+			? [
+					{
+						name: "password",
+						type: "password",
+						label: t("password.label"),
+						placeholder: t("password.placeholder"),
+						required: true,
+					},
+				]
+			: []
+	),
 ])
 
-const { authMetadata } = storeToRefs(useAuth())
-const providers = useAuthProviders(backlink)
-
-const schema = z.object({
-	email: z.email(),
-	displayName: z.string(),
-})
-
-type Schema = z.output<typeof schema>
+type Schema = {
+	email: string
+	displayName: string
+	password?: string
+}
+const schema = extendIf(
+	z.object({
+		email: z.email(),
+		displayName: z.string(),
+	}),
+	authProvider.value?.onboardingMode == "instant",
+	{ password: z.string() },
+) satisfies z.ZodType<Schema>
 
 const status = ref<"idle" | "loading" | "error" | "success">("idle")
 const error = ref()
@@ -109,22 +127,22 @@ const error = ref()
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
 	status.value = "loading"
 	error.value = undefined
-	const keycloakApi = useApi(AuthApi)
 
-	const request: KeycloakRegisterRequest = {
-		email: payload.data.email,
-		displayName: payload.data.displayName,
+	const response = await authStore.register!(payload.data)
+
+	if (!response?.ok) {
+		status.value = "error"
+		error.value = response?.status == 409 ? "conflict" : "generic"
+		return
 	}
 
-	const response = await keycloakApi.authKeycloakRegisterPostRaw({ keycloakRegisterRequest: request })
-		.then(it => it.raw)
-		.catch(it => it.response)
+	status.value = "success"
 
-	if (response.ok) {
-		status.value = "success"
-	} else {
-		status.value = "error"
-		error.value = response.status == 409 ? "conflict" : "generic"
+	if (authProvider.value?.onboardingMode == "instant") {
+		navigateTo({
+			path: "/auth/onboarding",
+			query: { to: backlink },
+		})
 	}
 }
 </script>
@@ -140,12 +158,12 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 		</template>
 		<template v-else>
 			<UAuthForm
-				v-if="(authMetadata as KeycloakAuthenticationMetadata | undefined)?.onboardingUrl"
+				v-if="authProvider?.hasSelfRegistration"
 				:schema="schema"
 				:title="t('title')"
 				:description="t('description')"
 				:separator="t('separator')"
-				:providers="providers"
+				:providers="authProvider.getProviders?.(backlink)"
 				:fields="fields"
 				:submit="{ label: t('register') }"
 				:loading-auto="false"

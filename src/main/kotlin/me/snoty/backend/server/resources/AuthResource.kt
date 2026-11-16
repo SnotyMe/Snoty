@@ -6,8 +6,10 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.routing.openapi.*
 import me.snoty.backend.authentication.AuthenticationMetadata
+import me.snoty.backend.authentication.Role
 import me.snoty.backend.injection.getFromAllScopes
 import me.snoty.backend.server.routing.Resource
+import me.snoty.backend.utils.getUserRoles
 import org.koin.core.Koin
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
@@ -33,5 +35,13 @@ fun AuthResource(koin: Koin) = Resource {
                 }
             }
         }
+
+        get("/roles") {
+            val roles = call.getUserRoles()
+
+            call.respond(roles)
+        }
+    }.describe {
+        tag("auth")
     }
 }
