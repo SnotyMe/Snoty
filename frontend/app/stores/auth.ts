@@ -1,15 +1,10 @@
 import { useApi } from "~/api/backend/api-clients"
-import {
-	AuthApi,
-	type AuthenticationMetadata,
-	type KeycloakAuthenticationMetadata,
-	type OAuth2TokenResponse,
-	ResponseError,
-	type Role,
-} from "~/api/backend/generated"
+import { AuthApi, type AuthenticationMetadata, type Role } from "~/api/backend/generated"
 import { jwtDecode } from "jwt-decode"
 import type { User } from "#layers/base/app/types/user.ts"
 import type { AuthComposable } from "#layers/base/app/types/auth.ts"
+import { getAuthenticationProvider, type LoginRequest, type RegisterRequest } from "~/utils/auth/auth.ts"
+import { ifDefined } from "~/utils/utils.ts"
 
 export const useAuth = defineStore("auth", () => {
 	const authApi = useApi(AuthApi)
@@ -26,45 +21,12 @@ export const useAuth = defineStore("auth", () => {
 		})
 
 	const { data: authMetadata } = useAsyncData("authMetadata", getAuthMetadata)
+	const authProvider = computed(() => ifDefined(authMetadata.value, getAuthenticationProvider))
 
-	const setCookies = (data: OAuth2TokenResponse) => {
-		accessTokenCookie.value = data.access_token
-		refreshTokenCookie.value = data.refresh_token
-		idTokenCookie.value = data.id_token
-	}
-
-	const exchangeCode = async (code: string, redirectUrl: string) =>
-		authApi.authTokenPost({ code, redirectUrl })
-
-	const loginBasic = async (username: string, password: string) => {
-		const authMetadataValue = authMetadata.value as KeycloakAuthenticationMetadata | undefined
-		if (!authMetadataValue?.publicClientId) return
-
-		const params = new URLSearchParams({
-			client_id: authMetadataValue.publicClientId,
-			username,
-			password,
-			scope: "openid",
-			grant_type: "password",
-		})
-		const response = await fetch(
-			authMetadataValue.tokenUrl,
-			{
-				method: "POST",
-				body: params,
-			},
-		)
-
-		if (!response.ok) {
-			throw new ResponseError(response)
-		}
-
-		const json = await response.json()
-		login(json)
-	}
-
-	const login = (data: OAuth2TokenResponse) => {
-		setCookies(data)
+	const setCookies = (data: { accessToken: string, refreshToken?: string, idToken?: string }) => {
+		accessTokenCookie.value = data.accessToken
+		refreshTokenCookie.value = data.refreshToken
+		idTokenCookie.value = data.idToken
 	}
 
 	const safeNavigateTo = (backlink: string | undefined) => {
@@ -76,20 +38,17 @@ export const useAuth = defineStore("auth", () => {
 		}
 	}
 
-	const refresh = async () => {
-		const refreshToken = refreshTokenCookie.value
-		if (!refreshToken) return
+	const register = async (data: RegisterRequest) =>
+		await authProvider.value?.register?.(data)
 
-		const response = await authApi.authRefreshPost({ refreshToken })
+	const login = async (data: LoginRequest) =>
+		await authProvider.value?.login(data)
 
-		setCookies(response)
-
-		return response
-	}
+	const refresh = async () =>
+		authProvider.value?.refresh?.()
 
 	const logout = async () => {
-		const idToken = idTokenCookie.value as string
-		await authApi.authLogoutPost({ idToken })
+		await authProvider.value?.logout?.()
 
 		accessTokenCookie.value = undefined
 		refreshTokenCookie.value = undefined
@@ -127,8 +86,9 @@ export const useAuth = defineStore("auth", () => {
 
 	return {
 		authMetadata,
-		exchangeCode,
-		loginBasic,
+		authProvider,
+		setCookies,
+		register,
 		login,
 		refresh,
 		logout,
@@ -137,5 +97,6 @@ export const useAuth = defineStore("auth", () => {
 		safeNavigateTo,
 		accessToken: accessTokenCookie,
 		refreshToken: refreshTokenCookie,
+		idToken: idTokenCookie,
 	}
 }) satisfies AuthComposable

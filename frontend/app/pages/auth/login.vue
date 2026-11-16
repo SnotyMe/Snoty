@@ -36,8 +36,7 @@ import * as z from "zod"
 import type { AuthFormField, FormSubmitEvent } from "@nuxt/ui"
 import { definePageMeta } from "#imports"
 import { useAuth } from "~/stores/auth"
-import { useAuthProviders } from "~/composables/auth/useAuthProviders.ts"
-import { type KeycloakAuthenticationMetadata, ResponseError } from "~/api/backend/generated"
+import { ResponseError } from "~/api/backend/generated"
 import { buildUrl } from "~/utils/url.ts"
 
 definePageMeta({
@@ -64,12 +63,10 @@ const fields: AuthFormField[] = [
 ]
 
 const authStore = useAuth()
-const { authMetadata } = storeToRefs(authStore)
+const { authProvider } = storeToRefs(authStore)
 
 const route = useRoute()
 const backlink = route.query.to as string | undefined
-
-const providers = useAuthProviders(backlink)
 
 const [
 	DefineNoAccount,
@@ -90,7 +87,10 @@ const error = ref<string>()
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
 	error.value = undefined
 	try {
-		await authStore.loginBasic(payload.data.email, payload.data.password)
+		await authStore.login({
+			email: payload.data.email,
+			password: payload.data.password,
+		})
 	} catch (e) {
 		if (e instanceof ResponseError && e.response.status == 400) {
 			error.value = "invalidCredentials"
@@ -123,8 +123,8 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 			title="Login"
 			:description="t('description')"
 			:separator="t('separator')"
-			:fields="authMetadata?.publicClientId ? fields : undefined"
-			:providers="providers"
+			:fields="authProvider?.hasBasicAuth ? fields : undefined"
+			:providers="authProvider?.getProviders?.(backlink)"
 			@submit="onSubmit"
 		/>
 		<UAlert
@@ -139,7 +139,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 				{{ t(`error.${error}`) }} <ReuseNoAccount/>
 			</template>
 		</UAlert>
-		<div v-if="(authMetadata as KeycloakAuthenticationMetadata | undefined)?.onboardingUrl" class="absolute mt-4 text-center text-sm bottom-0 right-0">
+		<div v-if="authProvider?.hasSelfRegistration" class="absolute mt-4 text-center text-sm bottom-0 right-0">
 			<ReuseNoAccount/>
 		</div>
 	</AuthContainer>

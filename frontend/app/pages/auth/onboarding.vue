@@ -1,32 +1,22 @@
 <i18n lang="yaml">
 en:
-  password:
-    label: Password
-    placeholder: Enter your password
-  passwordConfirm:
-    label: Confirm Password
-    placeholder: Enter the same password again
+  customize: Customize your Experience
   finish: Finish Onboarding
 de:
-  password:
-    label: Passwort
-    placeholder: Dein Passwort
-  passwordConfirm:
-    label: Passwort (Bestätigung)
-    placeholder: Das selbe Passwort noch einmal
+  customize: Konfiguriere die Grundeinstellungen
   finish: Onboarding abschließen
 </i18n>
 
 <script setup lang="ts">
-import type { AuthFormField, FormSubmitEvent, StepperItem } from "@nuxt/ui"
+import type { StepperItem } from "@nuxt/ui"
 import BasicSettings from "~/components/settings/BasicSettings.vue"
 import { useAuth } from "~/stores/auth.ts"
-import type { KeycloakAuthenticationMetadata } from "~/api/backend/generated"
-import { z } from "zod"
 import { jwtDecode } from "jwt-decode"
+import OnboardingPasswordForm, { type Schema } from "~/components/auth/OnboardingPasswordForm.vue"
 
-const authStore = useAuth()
-const { authMetadata } = storeToRefs(authStore)
+definePageMeta({
+	layout: "center",
+})
 
 const route = useRoute()
 const token = route.query.token as string
@@ -35,11 +25,13 @@ interface OnboardingToken {
 	email: string
 	displayName: string
 }
-const { clientId, email, displayName } = jwtDecode<OnboardingToken>(token)
+const onboardingToken = ifDefined(token, jwtDecode<OnboardingToken>)
 
-definePageMeta({
-	layout: "center",
-})
+const authStore = useAuth()
+const { user, authProvider, authMetadata } = storeToRefs(authStore)
+const multiStep = computed(() => onboardingToken && authProvider.value?.onboardingMode == "verify-email")
+
+const { email, displayName } = onboardingToken ?? user.value!
 
 const { t } = useI18n({ useScope: "local" })
 
@@ -70,40 +62,21 @@ const stepperItems = computed<StepperItem[]>(() => {
 	]
 })
 
-const fields = computed<AuthFormField[]>(() => [
-	{
-		name: "password",
-		type: "password",
-		label: t("password.label"),
-		placeholder: t("password.placeholder"),
-		required: true,
-	},
-	{
-		name: "passwordConfirm",
-		type: "password",
-		label: t("passwordConfirm.label"),
-		placeholder: t("passwordConfirm.placeholder"),
-		required: true,
-	},
-])
-
+const [
+	DefinePersonalization,
+	ReusePersonalization,
+] = createReusableTemplate()
 const stepper = useTemplateRef("stepper")
 
-const schema = z.object({
-	password: z.string(),
-	passwordConfirm: z.string(),
-}).refine(data => data.password === data.passwordConfirm, {
-	message: "Passwords do not match",
-	path: ["passwordConfirm"],
-})
+const finish = () => {
+	navigateTo("/")
+}
 
-type Schema = z.output<typeof schema>
-
-const confirmAuthentication = async (payload: FormSubmitEvent<Schema>) => {
+const confirmAuthentication = async (payload: Schema) => {
 	stepper.value?.next()
 
-	const metadata = authMetadata.value as KeycloakAuthenticationMetadata | undefined
-	if (metadata == undefined || metadata.onboardingUrl == undefined) {
+	const metadata = authMetadata.value as { onboardingUrl?: string } | undefined
+	if (metadata?.onboardingUrl == undefined) {
 		console.error("Metadata is null or Onboarding not supported")
 		authenticationStatus.value = "error"
 		return
@@ -119,23 +92,19 @@ const confirmAuthentication = async (payload: FormSubmitEvent<Schema>) => {
 			},
 			body: JSON.stringify({
 				token,
-				clientId,
-				password: payload.data.password,
+				clientId: onboardingToken?.clientId,
+				password: payload.password,
 			}),
 		})
 		if (!response.ok) throw Error("Response was not ok")
 
-		await authStore.loginBasic(email, payload.data.password)
+		await authStore.login({ email, password: payload.password })
 	} catch {
 		authenticationStatus.value = "error"
 		return
 	}
 
 	authenticationStatus.value = "success"
-}
-
-const finish = () => {
-	navigateTo("/")
 }
 </script>
 
@@ -149,7 +118,22 @@ const finish = () => {
 			</div>
 		</div>
 
+		<DefinePersonalization>
+			<UPageCard variant="naked">
+				<BasicSettings/>
+
+				<UButton
+					block
+					:disabled="multiStep && authenticationStatus != 'success'"
+					@click="finish"
+				>
+					{{ t('finish') }}
+				</UButton>
+			</UPageCard>
+		</DefinePersonalization>
+
 		<UStepper
+			v-if="multiStep"
 			ref="stepper"
 			:items="stepperItems"
 			:ui="{
@@ -160,22 +144,16 @@ const finish = () => {
 			size="sm"
 		>
 			<template #auth>
-				<UAuthForm :schema="schema" :fields="fields" @submit="confirmAuthentication"/>
+				<OnboardingPasswordForm v-model="authenticationStatus" @submit="confirmAuthentication"/>
 			</template>
 
 			<template #personalization>
-				<UPageCard variant="naked">
-					<BasicSettings/>
-
-					<UButton
-						block
-						:disabled="authenticationStatus != 'success'"
-						@click="finish"
-					>
-						{{ t('finish') }}
-					</UButton>
-				</UPageCard>
+				<ReusePersonalization/>
 			</template>
 		</UStepper>
+		<template v-else>
+			<h1 class="flex items-center gap-2"><UIcon name="i-lucide-palette"/> {{ t('customize') }}</h1>
+			<ReusePersonalization/>
+		</template>
 	</AuthContainer>
 </template>

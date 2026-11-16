@@ -3,7 +3,7 @@ export function validateSession(
 	refreshToken: { exp?: number | undefined, iat?: number | undefined } | null,
 ) {
 	// if there is no expiration, assume it is broken and don't refresh anything
-	if (token.exp === undefined || token.iat === undefined) {
+	if (token.exp === undefined) {
 		return false
 	}
 
@@ -14,6 +14,9 @@ export function validateSession(
 
 		return "sync"
 	}
+
+	// if there is no issued-at timestamp, assume it is broken and don't refresh anything
+	if (!token.iat) return false
 
 	// if the token lifetime is 66% over, refresh it
 	const tokenLifetime = token.exp - token.iat
