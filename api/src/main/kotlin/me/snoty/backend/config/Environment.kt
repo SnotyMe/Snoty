@@ -6,4 +6,5 @@ enum class Environment {
 	PRODUCTION;
 
 	fun isDev() = this == DEVELOPMENT || this == TEST
+	fun isProd() = !isDev()
 }
