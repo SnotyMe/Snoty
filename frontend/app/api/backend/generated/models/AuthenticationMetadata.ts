@@ -20,6 +20,13 @@ import {
     KeycloakAuthenticationMetadataFromJSONTyped,
     KeycloakAuthenticationMetadataToJSON,
 } from './KeycloakAuthenticationMetadata';
+import type { LocalAuthenticationMetadata } from './LocalAuthenticationMetadata';
+import {
+    instanceOfLocalAuthenticationMetadata,
+    LocalAuthenticationMetadataFromJSON,
+    LocalAuthenticationMetadataFromJSONTyped,
+    LocalAuthenticationMetadataToJSON,
+} from './LocalAuthenticationMetadata';
 import type { OidcAuthenticationMetadata } from './OidcAuthenticationMetadata';
 import {
     instanceOfOidcAuthenticationMetadata,
@@ -33,7 +40,7 @@ import {
  * 
  * @export
  */
-export type AuthenticationMetadata = KeycloakAuthenticationMetadata | OidcAuthenticationMetadata;
+export type AuthenticationMetadata = KeycloakAuthenticationMetadata | LocalAuthenticationMetadata | OidcAuthenticationMetadata;
 
 export function AuthenticationMetadataFromJSON(json: any): AuthenticationMetadata {
     return AuthenticationMetadataFromJSONTyped(json, false);
@@ -48,6 +55,9 @@ export function AuthenticationMetadataFromJSONTyped(json: any, ignoreDiscriminat
     }
     if (instanceOfKeycloakAuthenticationMetadata(json)) {
         return KeycloakAuthenticationMetadataFromJSONTyped(json, true);
+    }
+    if (instanceOfLocalAuthenticationMetadata(json)) {
+        return LocalAuthenticationMetadataFromJSONTyped(json, true);
     }
     if (instanceOfOidcAuthenticationMetadata(json)) {
         return OidcAuthenticationMetadataFromJSONTyped(json, true);
@@ -68,6 +78,9 @@ export function AuthenticationMetadataToJSONTyped(value?: AuthenticationMetadata
     }
     if (instanceOfKeycloakAuthenticationMetadata(value)) {
         return KeycloakAuthenticationMetadataToJSON(value as KeycloakAuthenticationMetadata);
+    }
+    if (instanceOfLocalAuthenticationMetadata(value)) {
+        return LocalAuthenticationMetadataToJSON(value as LocalAuthenticationMetadata);
     }
     if (instanceOfOidcAuthenticationMetadata(value)) {
         return OidcAuthenticationMetadataToJSON(value as OidcAuthenticationMetadata);

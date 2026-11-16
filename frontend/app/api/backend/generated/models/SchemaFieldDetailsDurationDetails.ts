@@ -31,13 +31,13 @@ export interface SchemaFieldDetailsDurationDetails {
      * @type {string}
      * @memberof SchemaFieldDetailsDurationDetails
      */
-    min?: string | null;
+    min?: string;
     /**
      * 
      * @type {string}
      * @memberof SchemaFieldDetailsDurationDetails
      */
-    max?: string | null;
+    max?: string;
 }
 
 
